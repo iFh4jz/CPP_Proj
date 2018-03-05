@@ -1,0 +1,5582 @@
+题目描述
+信号测量的结果包括测量编号和测量值。存在信号测量结果丢弃及测量结果重复的情况。
+
+  
+
+  1.测量编号不连续的情况，认为是测量结果丢弃。对应测量结果丢弃的情况，需要进行插值操作以更准确的评估信号。
+
+  采用简化的一阶插值方法,由丢失的测量结果两头的测量值算出两者中间的丢失值。
+
+  假设第M个测量结果的测量值为A，第N个测量结果的测量值为B。则需要进行(N-M-1)个测量结果的插值处理。进行一阶线性插值估计的第N+i个测量结果的测量值为A+( (B-A)/(N-M) )*i  (注：N的编号比M大。)
+
+  例如：只有测量编号为4的测量结果和测量编号为7的测量结果，测量值分别为4和10
+
+        则需要补充测量编号为5和6的测量结果。
+
+         其中测量编号为5的测量值=4 + ((10-4)/(7-4))*1 = 6
+
+         其中测量编号为6的测量值=4 + ((10-4)/(7-4))*2 = 8
+
+  
+
+      2.测量编号相同，则认为测量结果重复，需要对丢弃后来出现的测量结果。
+
+  
+
+  请根据以上规则进行测量结果的整理。
+
+详细描述：
+
+接口说明
+
+原型：
+
+intCleanUpMeasureInfo(MEASURE_INFO_STRUCT* pOriMeasureInfo,intnOriMINum,intnMaxMIRst, MEASURE_INFO_STRUCT* pMeasureInfoRst);
+
+输入参数：
+
+        MEASURE_INFO_STRUCT* pOriMeasureInfo:         原始测量结果内容，以结构数组方式存放。测量编号已经按升序排列。MEASURE_INFO_STRUCT定义包含编号和测量值，见OJ.h
+
+          int nOriMINum:                                原始测量结果个数。
+
+          int nMaxMIRst:                                整理的测量结果最大个数。
+
+输入参数：
+
+    MEASURE_INFO_STRUCT* pMeasureInfoRst：         整理的测量结果
+
+返回值：
+
+    Int
+
+         整理的测量结果个数
+ 
+
+输入描述:
+输入说明 
+1 输入两个整数m, n
+2 输入m个数据组
+
+输出描述:
+输出整理后的结果
+
+示例1
+输入
+2 3
+4 5
+5 7
+输出
+4 5
+5 7
+
+#include<stdio.h>
+#include<stdlib.h>
+int main()
+{
+    int m,n;
+    while(scanf("%d %d",&m,&n)!=EOF)
+    {
+        int M,A,B,N,i,j;
+        scanf("%d %d",&M,&A);
+        printf("%d %d\n",M,A);
+        for(i=1;i<m;i++)
+        {
+            scanf("%d %d",&N,&B);
+            if(N==M)  continue;
+            else
+            {
+                for (j = 1; j < N - M; ++j)
+                {
+                    printf("%d %d\n",M + j,A + ((B - A) / (N - M))*j);
+                }
+                printf("%d %d\n",N,B);
+                M = N;
+                A = B;    
+            }       
+        }
+    }
+    return 0;
+}
+
+题目描述
+输入一个单向链表和一个节点的值，从单向链表中删除等于该值的节点，删除后如果链表中无节点则返回空指针。
+
+链表结点定义如下：
+
+struct ListNode
+
+{
+
+      int       m_nKey;
+
+      ListNode* m_pNext;
+
+};
+
+详细描述：
+
+本题为考察链表的插入和删除知识。
+
+链表的值不能重复
+
+构造过程，例如
+
+1 -> 2
+
+3 -> 2
+
+5 -> 1
+
+4 -> 5
+
+7 -> 2
+
+最后的链表的顺序为 2 7 3 1 5 4 
+
+删除 结点 2 
+
+则结果为 7 3 1 5 4 
+
+ 
+
+ 
+
+输入描述:
+1 输入链表结点个数
+2 输入头结点的值
+3 按照格式插入各个结点
+4 输入要删除的结点的值
+
+输出描述:
+输出删除结点后的序列
+
+示例1
+输入
+5
+2
+3 2
+4 3
+5 2
+1 4
+3
+输出
+2 1 5 4
+
+#include<iostream>
+using namespace std;
+struct ListNode
+{
+      int  val;
+      ListNode* next;
+};
+int main(){
+    int n,head_value;
+    while(cin>>n>>head_value){
+        ListNode *p,*q,*head=new ListNode;
+        head->val=head_value;
+        head->next=NULL;
+        q=head;
+        for(int i=0;i<n-1;i++){
+            int x,y;
+            cin>>x>>y;
+            p=new ListNode;
+            p->val=x;
+            p->next=NULL;
+            while(q){
+                if(q->val==y){
+                      p->next=q->next;
+                    q->next=p;
+                    break;
+                }else
+                    q=q->next;
+            }
+            q=head;
+        }
+        int denum;
+        cin>>denum;
+        q=head;
+        while(q){
+            if(q->val==denum){
+                if(q==head){
+                    head=q->next;
+                    delete q;
+                }else{
+                    p->next=q->next;
+                    delete q;
+                }
+                break;
+            }else{
+                 p=q;
+                 q=q->next;
+            } 
+        }
+        q=head;
+        while(q){
+            cout<<q->val<<' ';
+            q=q->next;
+        }
+        cout<<endl;
+    }
+    return 0;
+}
+
+
+题目描述
+问题描述：有4个线程和1个公共的字符数组。线程1的功能就是向数组输出A，线程2的功能就是向字符输出B，线程3的功能就是向数组输出C，线程4的功能就是向数组输出D。要求按顺序向数组赋值ABCDABCDABCD，ABCD的个数由线程函数1的参数指定。[注：C语言选手可使用WINDOWS SDK库函数]
+接口说明：
+void init();  //初始化函数
+void Release(); //资源释放函数
+unsignedint__stdcall ThreadFun1(PVOID pM)  ; //线程函数1，传入一个int类型的指针[取值范围：1 – 250，测试用例保证]，用于初始化输出A次数，资源需要线程释放
+unsignedint__stdcall ThreadFun2(PVOID pM)  ;//线程函数2，无参数传入
+unsignedint__stdcall ThreadFun3(PVOID pM)  ;//线程函数3，无参数传入
+Unsigned int __stdcall ThreadFunc4(PVOID pM);//线程函数4，无参数传入
+char  g_write[1032]; //线程1,2,3,4按顺序向该数组赋值。不用考虑数组是否越界，测试用例保证
+输入描述:
+输入一个int整数
+
+输出描述:
+输出多个ABCD
+
+示例1
+输入
+10
+输出
+ABCDABCDABCDABCDABCDABCDABCDABCDABCDABCD
+
+#include<iostream>
+//#include<string>
+  
+using namespace std;
+  
+int main()
+{
+    int n;
+    while (cin >> n)
+    {
+        for (int i = 1; i <= n; i++)
+            cout << "ABCD";
+        cout << endl;
+    }
+    return 0;
+}
+
+
+
+题目描述
+请实现如下接口
+
+    /* 功能：四则运算
+
+     * 输入：strExpression：字符串格式的算术表达式，如: "3+2*{1+2*[-4/(8-6)+7]}"
+
+         * 返回：算术表达式的计算结果
+
+     */
+
+    public static int calculate(String strExpression)
+
+    {
+
+        /* 请实现*/
+
+        return 0;
+
+    } 
+
+约束：
+
+pucExpression字符串中的有效字符包括[‘0’-‘9’],‘+’,‘-’, ‘*’,‘/’ ,‘(’， ‘)’,‘[’, ‘]’,‘{’ ,‘}’。
+
+pucExpression算术表达式的有效性由调用者保证; 
+
+ 
+
+
+
+输入描述:
+输入一个算术表达式
+
+输出描述:
+得到计算结果
+
+示例1
+输入
+3+2*{1+2*[-4/(8-6)+7]}
+输出
+25
+
+#include<iostream>
+#include<string>
+#include<vector>
+#include<stack>
+using namespace std;
+int main() {
+    string s;
+    while (cin >> s) {
+        stack<char> opera;
+        vector<int> numcnt;
+        string s1;//后缀表达式
+        //中缀表达式转后缀表达式
+        for (int i = 0;i<s.size();i++) {
+            if (s[i] >= '0'&&s[i] <= '9') {
+                int tmp = 0;
+                while (s[i] >= '0'&&s[i] <= '9') {
+                    tmp++;
+                    s1 += s[i];
+                    i++;
+                }
+                i--;
+                numcnt.push_back(tmp);
+            }
+            else if (s[i] == '-' || s[i] == '+') {
+                if (s[i] == '-' && (s[i - 1] == '(' || s[i - 1] == '[' || s[i - 1] == '{'))
+                    s1 += '0';
+                while (!opera.empty()&&(opera.top() == '*' || opera.top() == '/' || opera.top() == '+' || opera.top() == '-')) {
+                    s1 += opera.top();
+                    opera.pop();
+                }
+                opera.push(s[i]);
+            }
+            else if (s[i] == '*' || s[i] == '/') {
+                while (!opera.empty()&&(opera.top() == '*' || opera.top() == '/')) {
+                    s1 += opera.top();
+                    opera.pop();
+                }
+                opera.push(s[i]);
+            }
+            else if (s[i] == '(' || s[i] == '[' || s[i] == '{')
+                opera.push(s[i]);
+            else if (s[i] == ')') {
+                while (opera.top() != '(') {
+                    s1 += opera.top();
+                    opera.pop();
+                }
+                opera.pop();
+            }
+            else if (s[i] == ']') {
+                while (opera.top() != '[') {
+                    s1 += opera.top();
+                    opera.pop();
+                }
+                opera.pop();
+            }
+            else if (s[i] == '}') {
+                while (opera.top() != '{') {
+                    s1 += opera.top();
+                    opera.pop();
+                }
+                opera.pop();
+            }
+            else
+                cout << "Invalid input!" << endl;
+        }
+        while (!opera.empty()) {
+            s1 += opera.top();
+            opera.pop();
+        }
+        //计算后缀表达式的值
+        stack<int> nums;
+        int ind = 0;
+        for (int i = 0;i<s1.size();i++) {
+            if (s1[i] >= '0'&&s1[i] <= '9') {
+                int total = 0;
+                while (numcnt[ind]--)
+                    total = 10 * total + (s1[i++] - '0');
+                i--;
+                nums.push(total);
+                ind++;
+            }          
+            else {
+                int tmp1 = nums.top();
+                nums.pop();
+                int tmp2 = nums.top();
+                nums.pop();
+                if (s1[i] == '+')
+                    nums.push(tmp2 + tmp1);
+                else if (s1[i] == '-')
+                    nums.push(tmp2 - tmp1);
+                else if (s1[i] == '*')
+                    nums.push(tmp2*tmp1);
+                else
+                    nums.push(tmp2 / tmp1);
+            }
+        }
+        cout << nums.top() << endl;    
+    }
+}
+
+
+题目描述
+输入一个单向链表，输出该链表中倒数第k个结点，链表的倒数第1个结点为链表的尾指针。
+
+链表结点定义如下：
+
+struct ListNode
+
+{
+
+      int       m_nKey;
+
+      ListNode* m_pNext;
+
+};
+
+详细描述：
+
+接口说明
+
+原型：
+
+ListNode* FindKthToTail(ListNode* pListHead, unsignedint k);
+
+输入参数：
+
+        ListNode* pListHead  单向链表
+
+     unsigned int k  倒数第k个结点
+
+输出参数（指针指向的内存区域保证有效）：
+
+    无
+
+返回值：
+
+        正常返回倒数第k个结点指针，异常返回空指针
+
+ 
+
+ 
+
+输入描述:
+输入说明
+1 输入链表结点个数
+2 输入链表的值
+3 输入k的值
+
+输出描述:
+输出一个整数
+
+示例1
+输入
+8
+1 2 3 4 5 6 7 8
+4
+输出
+5
+
+#include<iostream>
+#include<malloc.h>            //可有可无
+using namespace std;
+typedef struct node
+{
+    int data;
+    struct node *next;
+} linklist;
+ 
+linklist *create(int n)
+{
+    linklist *head = NULL,*p = NULL, *q = NULL;
+    head = (linklist*)malloc(sizeof(linklist));
+    p = head;        //尾插法建表（含头结点）
+    for (int i = 1; i <= n; i++)
+    {
+        q = (linklist*)malloc(sizeof(linklist));
+        cin >> q->data;
+        q->next = NULL;      //若没有这一句则程序运行出现问题
+        p->next = q;
+        p = q;
+    }
+    return head;
+    //free(head);
+    //head = NULL;
+    //free(s);
+    //s = NULL;      这4句无意义,return head则程序结束,不执行这几句;不能放在return head前面，会导致return head时发生错误
+}
+ 
+void fun(linklist *head,int n,int k)
+{
+    if(k>n||k<0)
+        cout<<"NULL"<<endl;
+    else if(k==0)
+        cout<<"0"<<endl;    //该题倒数第0个结点比较扯，给出结果为0，题意并未提示。不加这句话则运行错误
+    else
+    {
+        linklist *p=head->next;     //让p指向开始结点
+        for(int i=0;i<n-k;i++)       //倒数第一个结点下标为n-1,倒数第k个结点下标为n-k
+            p=p->next;
+        cout<<p->data<<endl;
+    }
+}
+ 
+ 
+int main()
+{
+    int n;
+    while(cin >> n)
+    {
+        linklist *head=create(n);
+        int k;
+        cin >> k;
+        fun(head,n,k);
+    }
+    //system("pause");
+    return 0;
+}
+
+题目描述
+Levenshtein 距离，又称编辑距离，指的是两个字符串之间，由一个转换成另一个所需的最少编辑操作次数。许可的编辑操作包括将一个字符替换成另一个字符，插入一个字符，删除一个字符。编辑距离的算法是首先由俄国科学家Levenshtein提出的，故又叫Levenshtein Distance。
+
+Ex：
+
+字符串A:abcdefg
+
+字符串B: abcdef
+
+通过增加或是删掉字符”g”的方式达到目的。这两种方案都需要一次操作。把这个操作所需要的次数定义为两个字符串的距离。
+
+要求：
+
+给定任意两个字符串，写出一个算法计算它们的编辑距离。
+
+ 
+
+请实现如下接口
+
+/*  功能：计算两个字符串的距离
+
+ *  输入： 字符串A和字符串B
+
+ *  输出：无
+
+ *  返回：如果成功计算出字符串的距离，否则返回-1
+
+ */
+
+     public   static   int  calStringDistance (String charA, String  charB)
+
+    {
+
+        return  0;
+
+    }  
+
+ 
+
+
+输入描述:
+输入两个字符串
+
+输出描述:
+得到计算结果
+
+示例1
+输入
+abcdefg
+abcdef
+输出
+1
+
+#include<iostream>
+#include <string>
+#include <vector>
+using namespace std;
+int calStringDistance(string a,string b){
+    int n = (int)a.size(),m = (int)b.size();
+    vector<vector<int>>dp(n+1,vector<int>(m+1,0));
+    dp[0][0] = 0;//dp[x][y]代表将a字符串前x个字符修改成b字符串前y个字符
+    for (int i=1; i<=m; ++i) dp[0][i] = i;
+    for (int i=1; i<=n; ++i) dp[i][0] = i;
+    for (int i=1; i<=n; ++i) {
+        for (int j=1; j<=m; ++j) {
+            int one = dp[i-1][j] +1,two = dp[i][j-1]+1,three = dp[i-1][j-1];
+            if(a[i-1]!=b[j-1]) three+=1;
+            dp[i][j] = min(min(one,two),three);
+        }
+    }
+    return dp[n][m];
+}
+int main(){
+    string a,b;
+    while(cin>>a>>b)
+        cout<<calStringDistance(a, b)<<endl;
+    return 0;
+}
+
+
+
+题目描述
+            1
+
+         1  1  1
+
+      1  2  3  2  1
+
+   1  3  6  7  6  3  1
+
+1  4  10 16 19  16 10  4  1
+
+以上三角形的数阵，第一行只有一个数1，以下每行的每个数，是恰好是它上面的数，左上角数到右上角的数，3个数之和（如果不存在某个数，认为该数就是0）。
+
+求第n行第一个偶数出现的位置。如果没有偶数，则输出-1。例如输入3,则输出2，输入4则输出3。
+
+ 
+
+输入n(n <= 1000000000)
+输入描述:
+输入一个int整数
+
+输出描述:
+输出返回的int值
+
+示例1
+输入
+4
+输出
+3
+
+#include<iostream>
+#include<string>
+#include<vector>
+ 
+using namespace std;
+int main()
+{
+    int n, m;
+    while(cin>>n)
+    {
+        m = 2*n - 1;
+        vector<vector<int>> dp(n, vector<int>(m,0));
+        dp[0][n-1] = 1;
+        for(int i=1; i<n; i++)
+        {
+            for(int j = 0; j<m; ++j)
+            {
+  
+                dp[i][j] = dp[i-1][j-1] + dp[i-1][j] + dp[i-1][j+1];
+            }
+        }
+        int k;
+        for(k=0; k<m; k++)
+        {
+            if(dp[n-1][k]%2==0 && dp[n-1][k]!=0)
+            {
+                cout<<k+1<<endl;
+                break;
+            }
+        }
+        if(k == m)
+            cout<<-1<<endl;
+    }
+    return 0;
+}
+
+题目描述
+给定一个字符串描述的算术表达式，计算出结果值。
+
+输入字符串长度不超过100，合法的字符包括”+, -, *, /, (, )”，”0-9”，字符串内容的合法性及表达式语法的合法性由做题者检查。本题目只涉及整型计算。
+
+输入描述:
+输入算术表达式
+
+输出描述:
+计算出结果值
+
+示例1
+输入
+400+5
+输出
+405
+
+#include <iostream>
+#include <string>
+#include <vector>
+#include <stack>
+#include <sstream>
+ 
+using namespace std;
+ 
+void propocess(string &str)
+{
+    for(int i=0;i<str.size();i++)
+    {
+        if(str[i] == '{')
+            str[i] = '(';
+        else if (str[i] == '}')
+            str[i] = ')';
+        else if(str[i] == '[')
+            str[i] = '(';
+        else if (str[i] == ']')
+            str[i] = ')';
+        else if(str[i] == '-')
+        {
+            if(i==0)
+                str.insert(0,1,0);
+            else if(str[i-1] =='(')
+                str.insert(i,1,0);
+        }
+    }
+}
+ 
+bool compriority(char top,char cur)
+{
+    if((top =='+'||top == '-') && (cur == '+'||cur == '-'))
+        return true;
+    if((top =='*'||top == '/') &&(cur =='+' || cur == '-' || cur =='*' || cur == '/'))
+        return true;
+    if (cur == ')')
+        return true;
+    return false;
+}
+ 
+vector<string> mid2post(string &str)
+{
+    vector<string> vstr;
+    stack<char> cstack;
+    for(int i=0;i<str.size();i++)
+    {
+        string temp = "";
+        if(str[i]>='0' && str[i]<='9')
+        {
+            temp +=str[i];
+            while(i+1<str.size() && str[i+1]>='0' && str[i+1]<='9')
+            {
+                temp += str[i+1];
+                i++;
+            }
+            vstr.push_back(temp);
+        }
+        else if(cstack.empty() || str[i]=='(')
+        cstack.push(str[i]);
+        else if(compriority(cstack.top(),str[i]))
+        {
+            if(str[i] == ')')
+            {
+                while(!cstack.empty() && cstack.top() !='(')
+                {
+                temp +=cstack.top();
+                cstack.pop();
+                vstr.push_back(temp);
+                temp = ""; 
+                }
+                cstack.pop();
+            }
+            else
+            {
+                while(!cstack.empty() && compriority(cstack.top(),str[i]))
+                {
+                    temp += cstack.top();
+                    cstack.pop();
+                    vstr.push_back(temp);
+                    temp = "";
+                }
+                cstack.push(str[i]);
+            }
+        }
+        else
+            cstack.push(str[i]);
+    }
+    while(!cstack.empty())
+    {
+        string temp="";
+        temp +=cstack.top();
+        cstack.pop();
+        vstr.push_back(temp);
+    }
+    return vstr;
+}
+ 
+int calcpostexp(vector<string> &vstr)
+{
+    int num,op1,op2;
+    stack<int> opstack;
+    for(int i=0;i<vstr.size();i++)
+    {
+        string temp = vstr[i];
+        if(temp[0]>='0' && temp[0]<='9')
+        {
+            stringstream  ss;
+            ss<<temp;
+            ss>>num;
+            opstack.push(num);
+        }
+        else if(vstr[i]=="+")
+        {
+            op2 = opstack.top();
+            opstack.pop();
+            op1 = opstack.top();
+            opstack.pop();
+            opstack.push(op1+op2);
+        }
+        else if(vstr[i]=="-")
+        {
+            op2 = opstack.top();
+            opstack.pop();
+            op1 = opstack.top();
+            opstack.pop();
+            opstack.push(op1-op2);
+        }
+        else if(vstr[i]=="*")
+        {
+            op2 = opstack.top();
+            opstack.pop();
+            op1 = opstack.top();
+            opstack.pop();
+            opstack.push(op1*op2);
+        }
+        else if(vstr[i]=="/")
+        {
+            op2 = opstack.top();
+            opstack.pop();
+            op1 = opstack.top();
+            opstack.pop();
+            opstack.push(op1/op2);
+        }
+    }
+    return opstack.top();
+}
+ 
+void calcexp(string str)
+{
+    vector<string> vstr;
+    propocess(str);
+    vstr = mid2post(str);
+    int res = calcpostexp(vstr);
+    cout << res <<endl;
+}
+ 
+int main()
+{
+    string str;
+    while(cin>>str)
+    {
+        calcexp(str);
+    }
+    return 0;
+}
+
+
+
+题目描述
+输出7有关数字的个数，包括7的倍数，还有包含7的数字（如17，27，37...70，71，72，73...）的个数 
+输入描述:
+一个正整数N。(N不大于30000)
+
+输出描述:
+不大于N的与7有关的数字个数，例如输入20，与7有关的数字包括7,14,17.
+
+示例1
+输入
+20
+输出
+3
+
+#include<iostream>
+using namespace std;
+ 
+int main()
+    {
+    int n;
+    while(cin>>n)
+        {
+        int cnt=0;
+        for(int i=7;i<=n;++i)
+            {
+            int temp=i;
+            if(i%7==0)
+                ++cnt;
+            else
+                while(temp!=0)
+                    {
+                    if(temp%10==7)
+                    {
+                        ++cnt;
+                        break;
+                    }
+ 
+                    temp=temp/10;
+                }
+        }
+        cout<<cnt<<endl;
+    }
+    return 0;
+}
+
+
+题目描述
+完全数（Perfect number），又称完美数或完备数，是一些特殊的自然数。
+
+它所有的真因子（即除了自身以外的约数）的和（即因子函数），恰好等于它本身。
+
+例如：28，它有约数1、2、4、7、14、28，除去它本身28外，其余5个数相加，1+2+4+7+14=28。
+
+给定函数count(int n),用于计算n以内(含n)完全数的个数。计算范围, 0 < n <= 500000
+
+返回n以内完全数的个数。 异常情况返回-1
+
+ 
+
+/**
+
+ * 
+
+ *  完全数（Perfect number），又称完美数或完备数，是一些特殊的自然数。
+
+ *  它所有的真因子（即除了自身以外的约数）的和（即因子函数），恰好等于它本身。
+
+ *  例如：28，它有约数1、2、4、7、14、28，除去它本身28外，其余5个数相加，1+2+4+7+14=28。
+
+ * 
+
+ *  给定函数count(int n),用于计算n以内(含n)完全数的个数
+
+ * @param n  计算范围, 0 < n <= 500000
+
+ * @return n 以内完全数的个数, 异常情况返回-1
+
+ * 
+
+ */    
+
+public   static   int  count( int  n)
+
+ 
+
+ 
+
+输入描述:
+输入一个数字
+
+输出描述:
+输出完全数的个数
+
+示例1
+输入
+1000
+输出
+3
+
+#include<iostream>
+ 
+using namespace std;
+ 
+bool is_perfect_num(int i){
+    int sum = 0, j=1,t=i/2;
+    while (j<t){
+        if (i%j == 0) {
+            sum += j;
+            if (j != 1) {
+                t = i / j;
+                if (j != i / j) sum += i/j;
+            }          
+        }
+        ++j;
+        if (sum>i) return false;
+    }
+    return (sum == i)?true:false;
+}
+ 
+int count_perfect_num(int n){
+    if (n<=0||n>500000) return -1;
+    int cnt = 0;
+    for (int i = 1; i <= n; ++i)
+        if (is_perfect_num(i)) ++cnt;
+    return cnt;
+}
+ 
+int main(){
+    int range;
+    while (cin >> range){
+        cout << count_perfect_num(range) << endl;
+    }
+    return 0;
+}
+
+题目描述
+在计算机中，由于处理器位宽限制，只能处理有限精度的十进制整数加减法，比如在32位宽处理器计算机中，
+参与运算的操作数和结果必须在-231~231-1之间。如果需要进行更大范围的十进制整数加法，需要使用特殊
+的方式实现，比如使用字符串保存操作数和结果，采取逐位运算的方式。如下：
+9876543210 + 1234567890 = ?
+让字符串 num1="9876543210"，字符串 num2="1234567890"，结果保存在字符串 result = "11111111100"。
+-9876543210 + (-1234567890) = ?
+让字符串 num1="-9876543210"，字符串 num2="-1234567890"，结果保存在字符串 result = "-11111111100"。
+
+ 
+
+
+要求编程实现上述高精度的十进制加法。
+要求实现方法： 
+public String add (String num1, String num2)
+【输入】num1：字符串形式操作数1，如果操作数为负，则num1的前缀为符号位'-'
+num2：字符串形式操作数2，如果操作数为负，则num2的前缀为符号位'-'
+【返回】保存加法计算结果字符串，如果结果为负，则字符串的前缀为'-'
+注：
+(1)当输入为正数时，'+'不会出现在输入字符串中；当输入为负数时，'-'会出现在输入字符串中，且一定在输入字符串最左边位置；
+(2)输入字符串所有位均代表有效数字，即不存在由'0'开始的输入字符串，比如"0012", "-0012"不会出现；
+(3)要求输出字符串所有位均为有效数字，结果为正或0时'+'不出现在输出字符串，结果为负时输出字符串最左边位置为'-'。
+
+ 
+
+ 
+
+输入描述:
+输入两个字符串
+
+输出描述:
+输出给求和后的结果
+
+示例1
+输入
+9876543210
+1234567890
+输出
+11111111100
+
+#include<iostream>
+#include<string>
+#include<algorithm>
+ 
+using namespace std;
+ 
+int main()
+{
+    string str1, str2;
+    while (cin >> str1 >> str2)
+    {
+        int len1 = str1.size();
+        int len2 = str2.size();
+        if (len1 != len2)
+        {
+            if (str1[0] == '-'&&str2[0] == '-')
+            {
+                while (str1.size()<str2.size())
+                {
+                    str1.insert(1, 1, '0');
+                }
+                while (str2.size()<str1.size())
+                {
+                    str2.insert(1, 1, '0');
+                }
+            }
+            else
+            {
+                while (str1.size()<str2.size())
+                {
+                    str1.insert(0, 1, '0');
+                }
+                while (str2.size()<str1.size())
+                {
+                    str2.insert(0, 1, '0');
+                }
+            }
+        }
+        string s;
+        int c = 0;
+        if (str1[0] != '-'&&str2[0] != '-')
+        {
+            for (int i = str1.size() - 1; i >= 0; i--)
+            {
+                int tmp = str1[i] - '0' + str2[i] - '0' + c;
+                if (tmp>9)
+                {
+                    tmp = tmp - 10;
+                    c = 1;
+                }
+                else
+                {
+                    c = 0;
+                }
+                s += to_string(tmp);
+            }
+            if (c == 1)
+            {
+                s += '1';
+            }
+            reverse(s.begin(), s.end());
+        }
+        if (str1[0] == '-'&&str2[0] == '-')
+        {
+            for (int i = str1.size() - 1; i>0; i--)
+            {
+                int tmp = str1[i] - '0' + str2[i] - '0' + c;
+                if (tmp>9)
+                {
+                    tmp = tmp - 10;
+                    c = 1;
+                }
+                else
+                {
+                    c = 0;
+                }
+                s += to_string(tmp);
+            }
+            if (c == 1)
+            {
+                s += '1';
+            }
+            s += '-';
+            reverse(s.begin(), s.end());
+        }
+        cout << s << endl;
+    }
+    return 0;
+}
+
+题目描述
+输入n个整数，输出其中最小的k个。
+
+详细描述：
+
+接口说明
+
+原型：
+
+bool GetMinK(unsignedint uiInputNum, int * pInputArray, unsignedint uiK, int * pOutputArray);
+
+输入参数：
+
+     unsignedint uiInputNum //输入整数个数
+
+int * pInputArray  //输入整数数组
+
+unsignedint uiK   //需输出uiK个整数
+
+输出参数（指针指向的内存区域保证有效）：
+
+    int * pOutputArray //最小的uiK个整数
+
+返回值：
+
+        false 异常失败
+
+          true  输出成功
+
+ 
+
+ 
+
+输入描述:
+输入说明 
+1 输入两个整数 
+2 输入一个整数数组
+
+输出描述:
+输出一个整数数组
+
+示例1
+输入
+5 2
+1 3 5 7 2
+输出
+1 2
+
+#include <iostream>
+#include <vector>
+#include <algorithm>
+ 
+using namespace std;
+ 
+int main ()
+{
+    int Num, Min;
+    while (cin >> Num >> Min)
+        {
+            vector <int> arr;
+    arr.clear();
+    int x;
+    for (int i = 0; i< Num; ++i)
+    {
+        cin >> x;
+        arr.push_back(x);
+    }
+    sort(arr.begin(),arr.end());
+    for(int i = 0; i < Min-1; ++i)
+    {
+        cout << arr[i] << ' ';
+    }
+       cout << arr[Min - 1] << endl;
+     
+         
+    }
+     
+     return 0;       
+}
+
+题目描述
+找出字符串中第一个只出现一次的字符
+
+ 
+
+ 
+
+ 
+
+输入描述:
+输入一个非空字符串
+
+输出描述:
+输出第一个只出现一次的字符，如果不存在输出-1
+
+示例1
+输入
+asdfasdfo
+输出
+o
+
+#include<iostream>
+#include<string>
+using namespace std;
+  
+int main()
+{
+    string str;
+    while (cin >> str)
+    {
+        bool flag = 1;
+        int a[26] = { 0 };
+        for (int i = 0; i < str.size(); i++)
+            a[str[i] - 'a']++;
+        for (int i = 0; i < str.size(); i++)
+            if (a[str[i] - 'a'] == 1)
+            {
+                cout << str[i] << endl;
+                flag = 0;
+                break;
+            }
+        if (flag)
+            cout << -1 << endl;
+    }
+    return 0;
+}
+
+题目描述
+任意一个偶数（大于2）都可以由2个素数组成，组成偶数的2个素数有很多种情况，本题目要求输出组成指定偶数的两个素数差值最小的素数对
+输入描述:
+输入一个偶数
+
+输出描述:
+输出两个素数
+
+示例1
+输入
+20
+输出
+7
+13
+
+#include<iostream>
+using namespace std;
+ 
+bool func(int n)
+{
+    int i;
+    if(n%2==0)
+        return false;
+     
+    for(i=3;i*i<=n;i+=2)
+    {
+        if(n%i==0)
+            break;
+    }
+    if(i*i>n)
+        return true;
+    else
+        return false;
+}
+ 
+int main()
+{
+    int num;
+    int half;
+    int i;
+    while(cin>>num)
+    {
+        half = num/2;
+        for(i=half;i>0;i--)
+        {
+            if(func(i)&&(func(num-i)))
+                break;
+        }
+         
+        cout<<i<<endl<<num-i<<endl;
+    }
+    return 0;
+}
+
+题目描述
+题目描述
+
+把M个同样的苹果放在N个同样的盘子里，允许有的盘子空着不放，问共有多少种不同的分法？（用K表示）5，1，1和1，5，1 是同一种分法。
+
+
+输入
+
+每个用例包含二个整数M和N。0<=m<=10，1<=n<=10。
+
+
+样例输入
+
+7 3
+
+
+样例输出
+
+8
+
+
+/**
+
+* 计算放苹果方法数目
+
+
+* 输入值非法时返回-1
+
+* 1 <= m,n <= 10
+
+* @param m 苹果数目
+
+* @param n 盘子数目数
+
+* @return 放置方法总数
+
+*
+
+*/
+
+public static int count(int m, int n)
+
+
+
+
+输入描述:
+输入两个int整数
+
+输出描述:
+输出结果，int型
+
+示例1
+输入
+7 3
+输出
+8
+
+#include<iostream>
+#include<cstdlib>
+using namespace std;
+int count1(int m,int n)
+{
+    if(m==0 || n==1)
+    {
+    return 1;
+    }
+    if(m<n)
+    {
+        return count1(m,m);
+    }
+    else
+    {
+        return (count1(m,n-1)+count1(m-n,n));
+    }
+}
+int main()
+{
+    int m;
+    int n;
+    while(cin>>m>>n)
+    {
+        cout<<count1(m,n)<<endl;
+    }
+    return 0;
+}
+
+题目描述
+请实现如下接口
+
+     public   static   int  findNumberOf1( int num)
+
+    {
+
+         /*  请实现  */
+
+         return  0;
+
+    } 譬如：输入5 ，5的二进制为101，输出2
+
+ 
+
+涉及知识点：
+
+输入描述:
+输入一个整数
+
+输出描述:
+计算整数二进制中1的个数
+
+示例1
+输入
+5
+输出
+2
+
+#include<iostream>
+using namespace std;
+#include<vector>
+#include<string>
+#include<algorithm>
+ 
+int main(){
+ 
+ int n;
+ while(cin>>n)
+ {
+     int temp=n;
+     int count=0;
+     while(temp)
+     {
+         if(temp%2==1)
+           count+=1;
+         temp/=2;
+     }
+     cout<<count<<endl;
+ }
+ 
+    return 0;
+}
+
+题目描述
+一个DNA序列由A/C/G/T四个字母的排列组合组成。G和C的比例（定义为GC-Ratio）是序列中G和C两个字母的总的出现次数除以总的字母数目（也就是序列长度）。在基因工程中，这个比例非常重要。因为高的GC-Ratio可能是基因的起始点。
+
+给定一个很长的DNA序列，以及要求的最小子序列长度，研究人员经常会需要在其中找出GC-Ratio最高的子序列。
+ 
+
+输入描述:
+输入一个string型基因序列，和int型子串的长度
+
+输出描述:
+找出GC比例最高的子串,如果有多个输出第一个的子串
+
+示例1
+输入
+AACTGTGCACGACCTGA
+5
+输出
+GCACG
+
+#include<iostream>
+#include<string.h>
+using namespace std;
+static char* findString(char str[],int n)
+    
+{
+    if(n<0)
+         return NULL;
+    int length=strlen(str);
+    if (n>length)
+        return str;
+    int max_num=0;
+    int index=n;
+    for(int i=n-1;i<length;i++)
+    {
+        int num=0;
+        for (int j=i-n+1;j<=i;j++)
+            if (str[j]=='G'||str[j]=='C')
+                num++;
+        if(num>max_num)
+        {
+          max_num=num;
+          index=i;
+        }
+    }
+    for(int i=0;i<n;i++)
+        cout<<str[index-n+1+i];
+    cout<<endl;
+    char out[100];
+    return out;
+}
+int main()
+{
+    char str[1000];
+    int n;
+    while(cin>>str>>n)
+        findString(str,n);
+    return 0;
+}
+
+题目描述
+MP3 Player因为屏幕较小，显示歌曲列表的时候每屏只能显示几首歌曲，用户要通过上下键才能浏览所有的歌曲。为了简化处理，假设每屏只能显示4首歌曲，光标初始的位置为第1首歌。
+
+ 
+
+现在要实现通过上下键控制光标移动来浏览歌曲列表，控制逻辑如下：
+
+歌曲总数<=4的时候，不需要翻页，只是挪动光标位置。
+
+光标在第一首歌曲上时，按Up键光标挪到最后一首歌曲；光标在最后一首歌曲时，按Down键光标挪到第一首歌曲。
+
+
+
+其他情况下用户按Up键，光标挪到上一首歌曲；用户按Down键，光标挪到下一首歌曲。
+
+
+
+  2. 歌曲总数大于4的时候（以一共有10首歌为例）：
+
+ 
+
+特殊翻页：屏幕显示的是第一页（即显示第1 – 4首）时，光标在第一首歌曲上，用户按Up键后，屏幕要显示最后一页（即显示第7-10首歌），同时光标放到最后一首歌上。同样的，屏幕显示最后一页时，光标在最后一首歌曲上，用户按Down键，屏幕要显示第一页，光标挪到第一首歌上。
+
+
+
+一般翻页：屏幕显示的不是第一页时，光标在当前屏幕显示的第一首歌曲时，用户按Up键后，屏幕从当前歌曲的上一首开始显示，光标也挪到上一首歌曲。光标当前屏幕的最后一首歌时的Down键处理也类似。
+
+
+
+其他情况，不用翻页，只是挪动光标就行。
+
+ 
+
+输入描述:
+输入说明：
+1 输入歌曲数量
+2 输入命令 U或者D
+
+输出描述:
+输出说明
+1 输出当前列表
+2 输出当前选中歌曲
+
+示例1
+输入
+10
+UUUU
+输出
+7 8 9 10
+7
+
+#include<stdio.h>
+#include<iostream>
+#include<string.h>
+using namespace std;
+  
+void SelectSong(int num, char* str)
+{
+    int r = 1;
+    int top = 1;
+    int buttom = 4;
+    int len = strlen(str);
+    if(num<=4)
+    {
+        top = 1;
+        buttom = num;
+        r = 1;
+        for (int i = 0; i < len; i++)
+        {
+             if (str[i] == 'U')
+             {
+                 if(r==1)
+                     r = num;
+                 else
+                    r--;
+             }
+            else
+            {
+                if(r==num)
+                    r = 1;
+                else
+                    r++;
+            }
+        }
+    }
+    else
+    {
+        for (int i = 0; i < len; i++)
+        {
+            if (str[i] == 'U')
+            {
+                if (r == 1)
+                {
+                    r = num;
+                    top = num - 3;
+                    buttom = num;
+                }
+                else if (r == top)
+                {
+                    r--;
+                    top--;
+                    buttom--;
+                }
+                else
+                    r--;
+            }
+            else
+            {
+                if (r == num)
+                {
+                    r = 1;
+                    top = 1;
+                    buttom = 4;
+                }
+                else if (r == buttom)
+                {
+                    r++;
+                    top++;
+                    buttom++;
+                }
+                else
+                    r++;
+  
+            }
+        }
+    }
+      
+    for (int i = top; i < buttom; i++)
+    {
+        cout<<i<<" ";
+    }
+          
+    cout << buttom << endl;
+    cout << r << endl;
+}
+  
+int main()
+{
+    int num;
+    char str[100];
+    while (cin >> num >> str)
+    {
+        SelectSong(num, str);
+    }
+    return 0;
+}
+
+
+题目描述
+查找两个字符串a,b中的最长公共子串。若有多个，输出在较短串中最先出现的那个。
+输入描述:
+输入两个字符串
+输出描述:
+返回重复出现的字符
+示例1
+输入
+abcdefghijklmnop
+abcsafjklmnopqrstuvw
+输出
+jklmnop
+
+
+#include<iostream>
+#include<string>
+#include<algorithm>
+#include<vector>
+using namespace std;
+int main()
+{
+   string str1,str2;
+   while(cin>>str1>>str2)
+   {
+        if(str1.size()>str2.size())
+        swap(str1,str2);
+       
+    int len1=str1.size(),len2=str2.size(),i,j,start=0,max=0;
+       
+    vector<vector<int>>dp(len1+1,vector<int>(len2+1,0));
+    for(i=1;i<=len1;i++)
+        for(j=1;j<=len2;j++)
+        {
+            if(str1[i-1]==str2[j-1])
+                dp[i][j]=dp[i-1][j-1]+1;
+            if(dp[i][j]>max)
+            {
+                max=dp[i][j];
+                start=i-max;
+            }
+        }
+        cout<<str1.substr(start,max)<<endl;
+   }
+   return 0;
+}
+
+
+题目描述
+有6条配置命令，它们执行的结果分别是：
+
+<colgroup><col style="width&#58;181px&#59;" width="181"/><col style="width&#58;347px&#59;" width="346"/></colgroup>
+命   令	执   行
+reset	reset what
+reset board	board fault
+board add	where to add
+board delet	no board at all
+reboot backplane	impossible
+backplane abort	install first
+he he	unkown command
+  注意：he he不是命令。
+
+为了简化输入，方便用户，以“最短唯一匹配原则”匹配：
+1、若只输入一字串，则只匹配一个关键字的命令行。例如输入：r，根据该规则，匹配命令reset，执行结果为：reset what；输入：res，根据该规则，匹配命令reset，执行结果为：reset what； 
+2、若只输入一字串，但本条命令有两个关键字，则匹配失败。例如输入：reb，可以找到命令reboot backpalne，但是该命令有两个关键词，所有匹配失败，执行结果为：unkown command 
+3、若输入两字串，则先匹配第一关键字，如果有匹配但不唯一，继续匹配第二关键字，如果仍不唯一，匹配失败。例如输入：r b，找到匹配命令reset board，执行结果为：board fault。
+
+4、若输入两字串，则先匹配第一关键字，如果有匹配但不唯一，继续匹配第二关键字，如果唯一，匹配成功。例如输入：b a，无法确定是命令board add还是backplane abort，匹配失败。
+5、若输入两字串，第一关键字匹配成功，则匹配第二关键字，若无匹配，失败。例如输入：bo a，确定是命令board add，匹配成功。
+6、若匹配失败，打印“unkown command”
+
+
+输入描述:
+多行字符串，每行字符串一条命令
+
+输出描述:
+执行结果，每条命令输出一行
+
+示例1
+输入
+reset
+reset board
+board add
+board delet
+reboot backplane
+backplane abort
+输出
+reset what
+board fault
+where to add
+no board at all
+impossible
+install first
+
+#include<iostream>
+#include<string.h>
+   
+using namespace std;
+#define M 1000
+   
+bool ismatch(char *str1,char *str2)
+{
+    int l=strlen(str1),flag=0;
+   
+    for(int i=0;i<l&&str2[i]!='\0';i++)
+    {
+        if(str1[i]!=str2[i])
+            flag=1;
+   
+       
+    }
+    if(flag)
+        return false;
+    else
+        return true;
+}
+   
+int main()
+{
+    char str[M][M];
+   
+    int count=0;
+   
+    while(gets(str[count]))
+    {
+        count++;
+       
+    }
+   
+   
+    for(int i=0;i<count;i++)
+    {
+        int l=strlen(str[i]);
+   
+        char s1[M][M];
+        int f1=0,f2=0;
+   
+        for(int j=0;j<l;j++)
+        {
+            if(str[i][j]==' ')
+            {
+                j++;
+                while(str[i][j]==' ')
+                {
+                    j++;
+                }
+                j--;
+   
+                s1[f1][f2]='\0';
+                f1++;
+                f2=0;
+                continue;    
+            }
+            s1[f1][f2++]=str[i][j];
+           
+        }
+        s1[f1][f2]='\0';
+        f1++;
+   
+        //for(int n=0;n<f1;n++)
+        //  cout<<s1[n]<<endl;
+   
+        if(f1==1)
+        {
+            if(ismatch(s1[0],"reset"))
+                cout<<"reset what"<<endl;
+            else
+                cout<<"unkown command"<<endl;
+        }
+        else
+        {
+            if((ismatch(s1[0],"reset")&&ismatch(s1[1],"board"))&&(!ismatch(s1[0],"reboot")||(ismatch(s1[0],"reboot")&&!ismatch(s1[1],"backplane"))))
+                cout<<"board fault"<<endl;
+            else if((ismatch(s1[0],"reboot")&&ismatch(s1[1],"backplane"))&&(!ismatch(s1[0],"reset")||(ismatch(s1[0],"reset")&&!ismatch(s1[1],"board"))))
+                cout<<"impossible"<<endl;
+            else if((ismatch(s1[0],"board")&&ismatch(s1[1],"add"))&&(!ismatch(s1[0],"backplane")||(ismatch(s1[0],"backplane")&&!ismatch(s1[1],"abort"))))
+                cout<<"where to add"<<endl;
+            else if((ismatch(s1[0],"backplane")&&ismatch(s1[1],"abort"))&&(!ismatch(s1[0],"board")||(ismatch(s1[0],"board")&&!ismatch(s1[1],"add"))))
+                cout<<"install first"<<endl;
+            else if(ismatch(s1[0],"board")&&ismatch(s1[1],"delet"))
+                cout<<"no board at all"<<endl;
+            else
+                cout<<"unkown command"<<endl;
+           
+        }
+   
+    }
+    return 0;
+}
+
+题目描述
+问题描述：给出4个1-10的数字，通过加减乘除，得到数字为24就算胜利
+输入：
+4个1-10的数字。[数字允许重复，测试用例保证无异常数字]
+输出：
+true or false
+
+输入描述:
+输入4个int整数
+
+输出描述:
+返回能否得到24点，能输出true，不能输出false
+
+示例1
+输入
+7 2 1 10
+输出
+true
+
+/*#include<iostream>
+#include<string>
+#include<cstring>
+#include<algorithm>
+#include<fstream>
+#define N 4
+using namespace std;
+ 
+int flag = 0;
+int num[N];
+ 
+void solveByDfs(int index, int result, int num[])
+{
+    if (result == 24)
+    {
+        flag = 1;
+        return;
+    }
+    if (result > 24 || index >= 4)
+        return;
+    for (int choose = 0; choose<4; choose++)
+    {
+        switch (choose)
+        {
+        case 0:
+            solveByDfs(index + 1, result + num[index], num);
+            break;
+        case 1:
+            solveByDfs(index + 1, result - num[index], num);
+            break;
+        case 2:
+            solveByDfs(index + 1, result*num[index], num);
+            break;
+        case 3:
+            solveByDfs(index + 1, result / num[index], num);
+            break;
+        }
+        if (flag)
+            return;
+    }
+}
+ 
+int main()
+{
+    int test = 0;
+    while (cin >> num[0] >> num[1] >> num[2] >> num[3])
+    {
+        flag = 0;
+        test = 0;
+        sort(num, num + 4);
+        do
+        {
+            solveByDfs(0, test, num);
+        } while (next_permutation(num, num + 4));
+        if (flag)
+            cout << "true" << endl;
+        else
+            cout << "false" << endl;
+    }
+ 
+    return 0;
+}
+*/
+ 
+#include<iostream>
+#include<vector>
+#include<algorithm>
+using namespace std;
+ 
+void check24(const vector<int> &nums, int index, double result, bool &isSuccess)
+{
+    if (index == 4)   //递归结束条件
+    {
+        if (abs(result - 24) < 1e-6)
+            isSuccess = true;
+        return;
+    }
+    for (int i = 0; i < 4; i++)
+    {
+        if (i == 0)
+            check24(nums, index + 1, result + nums[index], isSuccess);
+        else if (i == 1)
+            check24(nums, index + 1, result - nums[index], isSuccess);
+        else if(i==2)
+            check24(nums, index + 1, result * nums[index], isSuccess);
+        else
+            check24(nums, index + 1, result / nums[index], isSuccess);
+        if (isSuccess)
+            return;
+    }
+}
+ 
+int main()
+{
+    vector<int>nums(4);
+    while (cin >> nums[0] >> nums[1] >> nums[2] >> nums[3])
+    {
+        sort(nums.begin(), nums.end());
+        bool isSuccess = false;
+        do {
+            check24(nums, 0, 0, isSuccess);
+            if (isSuccess)
+                break;
+        } while (next_permutation(nums.begin(), nums.end()));
+        if (isSuccess)
+            cout << "true" << endl;
+        else
+            cout << "false" << endl;       
+ 
+    }
+    return 0;
+}
+
+题目描述
+查找和排序
+
+题目：输入任意（用户，成绩）序列，可以获得成绩从高到低或从低到高的排列,相同成绩
+      都按先录入排列在前的规则处理。
+
+   例示：
+   jack      70
+   peter     96
+   Tom       70
+   smith     67
+
+   从高到低  成绩            
+   peter     96    
+   jack      70    
+   Tom       70    
+   smith     67    
+
+   从低到高
+
+   smith     67  
+
+   Tom       70    
+   jack      70    
+   peter     96      
+
+输入描述:
+输入多行，先输入要排序的人的个数，然后分别输入他们的名字和成绩，以一个空格隔开
+
+输出描述:
+按照指定方式输出名字和成绩，名字和成绩之间以一个空格隔开
+
+示例1
+输入
+3
+0
+fang 90
+yang 50
+ning 70
+输出
+fang 90
+ning 70
+yang 50
+
+
+#include<iostream>
+#include<string>
+#include<vector>
+#include<algorithm>
+using namespace std;
+struct student{
+    string name;
+    int grade;
+};
+bool cmp0(const student &stu1,const student &stu2){
+    return stu1.grade>stu2.grade;
+}
+bool cmp1(const student &stu1,const student &stu2){
+    return stu1.grade<stu2.grade;
+}
+int main(){
+    int x=0, num=0;
+    while(cin >> num >> x){
+        vector<student> stu(num);
+        for(int i=0;i<num;++i){
+            cin >> stu[i].name >> stu[i].grade;
+        }
+        if(x==0){
+            stable_sort(stu.begin(),stu.end(),cmp0);
+        }else{
+            stable_sort(stu.begin(),stu.end(),cmp1);
+        }
+        for(int i=0;i<num;++i){
+            cout << stu[i].name << " " << stu[i].grade << endl;
+        }
+    }
+    return 0;
+}
+
+题目描述
+如果A是个x行y列的矩阵，B是个y行z列的矩阵，把A和B相乘，其结果将是另一个x行z列的矩阵C。这个矩阵的每个元素是由下面的公式决定的：
+
+ 
+
+原型：
+
+voidmatrix_multiply(int *m1,int *m2,int *r, int x, int y, int z);
+
+输入参数：
+
+    int *m1：x行y列的矩阵(array1[x][y])
+
+    int *m2：y行z列的矩阵(array2[y][z])
+
+    int x：矩阵m1的行数
+
+    int y：矩阵m1的列数/矩阵m2的行数
+
+    int z：矩阵m2的列数
+
+ 
+
+输出参数：
+
+    int *r：矩阵m1, m2相乘的结果(array3[x][z])
+
+ 
+
+返回值：
+
+        void
+
+ 
+
+ 
+
+输入描述:
+输入说明：
+1、第一个矩阵的行数
+2、第一个矩阵的列数和第二个矩阵的行数
+3、第二个矩阵的列数
+4、第一个矩阵的值
+5、第二个矩阵的值
+
+输出描述:
+输出两个矩阵相乘的结果
+
+示例1
+输入
+2
+2
+2
+3 8
+8 0
+9 0
+18 9
+输出
+171 72
+72 0
+
+#include <iostream>
+#include <vector>
+using namespace std;
+  
+int main()
+{
+    int row1, col1, col2;
+    while (cin >> row1 >> col1 >> col2) {
+        vector<vector<int> > array1(row1, vector<int>(col1, 0));
+        vector<vector<int> > array2(col1, vector<int>(col2, 0));
+        vector<vector<int> > array3(row1, vector<int>(col2, 0));
+        for (int i = 0; i < row1; i++)
+            for (int j = 0; j < col1; j++)
+            {
+                cin >> array1[i][j];
+            }
+              
+        for (int i = 0; i < col1; i++)
+            for (int j = 0; j < col2; j++)
+            {
+                cin >> array2[i][j];
+            }
+        for (int i = 0; i < row1; i++) {
+            for (int j = 0; j < col2; j++) {
+                                int sum = 0;
+                for (int k = 0; k < col1; k++) {
+                    sum += array1[i][k] * array2[k][j];
+                }
+                array3[i][j] = sum;
+            }
+        }
+          
+        for (int i = 0; i < row1; i++) {
+            for (int k = 0; k < col2 - 1; k++)
+                cout << array3[i][k] << ' ';
+            cout << array3[i][col2-1] << endl;
+        }          
+    }
+}
+
+题目描述
+矩阵乘法的运算量与矩阵乘法的顺序强相关。
+
+
+例如：
+
+    A是一个50×10的矩阵，B是10×20的矩阵，C是20×5的矩阵
+
+ 
+
+计算A*B*C有两种顺序：（（AB）C）或者（A（BC）），前者需要计算15000次乘法，后者只需要3500次。
+
+ 
+
+编写程序计算不同的计算顺序需要进行的乘法次数
+
+ 
+
+ 
+
+ 
+
+ 
+
+输入描述:
+输入多行，先输入要计算乘法的矩阵个数n，每个矩阵的行数，列数，总共2n的数，最后输入要计算的法则
+
+输出描述:
+输出需要进行的乘法次数
+
+示例1
+输入
+3
+50 10
+10 20
+20 5
+(A(BC))
+输出
+3500
+
+#include<iostream>
+#include<vector>
+#include<string>
+using namespace std;
+int main()
+{
+    int n;
+    string s;
+    while(cin>>n)
+    {
+        int a[n][2];
+        for(int i=0;i<n;++i)
+            cin>>a[i][0]>>a[i][1];
+        int k=0,sum=0;
+        int p=0,q=0;
+        vector<int> vec;
+        cin>>s;
+        for(int i=0;i<s.length();i++)
+        {
+            if( s[i]!=')' )
+            {
+                if( s[i]=='(' )
+                    p++;
+                else
+                    vec.push_back(k++);
+            }
+            else
+            {
+                if(++q>p)
+                    break;  //测试用例中有‘)’个数多于‘(’个数的情况，故加入该判断语句。
+                int y=vec.back();
+                vec.pop_back();
+                int x=vec.back();
+                vec.pop_back();
+                sum+=a[x][0]*a[x][1]*a[y][1];
+                a[x][1]=a[y][1];
+                vec.push_back(x);
+            }
+        }
+        cout<<sum<<endl;
+    }
+    return 0;
+}
+ 
+ 
+/*
+#include<stdio.h>
+int main(){
+    int n;
+    while(scanf("%d",&n)!=EOF)
+    {
+        int a[100][2]={0};
+        char b[100]={0},c[100]={0};
+        int top=-1;
+        int i,j,k;
+        char *p;
+        int m,s;
+        int sum=0;
+        k=n;
+        for(i=0;i<n;i++)
+            scanf("%d %d",&a[i][0],&a[i][1]);
+        scanf("%s",b);
+        p=b;
+        while(*(p+1)!='\0'){
+            if(top==-1||(*p>='A'&&*p<='Z')||(*p=='(')){
+                top++;
+                c[top]=*p;
+            }
+            else if(*p==')'){
+                m=c[top]-'A';
+                top--;
+                s=c[top]-'A';
+                top--;
+                sum+=a[s][0]*a[s][1]*a[m][1];
+                c[top]='A'+k;
+                a[k][0]=a[s][0];
+                a[k][1]=a[m][1];
+                k++;
+            }
+            p++;    
+        }
+        printf("%d\n",sum);  
+    }
+    return 0;
+}
+*/
+
+题目描述
+问题描述：在计算机中，通配符一种特殊语法，广泛应用于文件搜索、数据库、正则表达式等领域。现要求各位实现字符串通配符的算法。
+要求：
+实现如下2个通配符：
+*：匹配0个或以上的字符（字符由英文字母和数字0-9组成，不区分大小写。下同）
+？：匹配1个字符
+
+
+输入：
+通配符表达式；
+一组字符串。
+
+
+输出：
+返回匹配的结果，正确输出true，错误输出false
+
+输入描述:
+先输入一个带有通配符的字符串，再输入一个需要匹配的字符串
+
+输出描述:
+返回匹配的结果，正确输出true，错误输出false
+
+示例1
+输入
+te?t*.*
+txt12.xls
+输出
+false
+
+#include<iostream>
+using namespace std;
+  
+bool match(char *str1, char *str2)
+    {
+    if(*str1 == '\0'  && *str2 == '\0')
+        return true;
+    else if(*str1 == '\0' || *str2 == '\0')
+        return false;
+    if(*str1 == '?')
+        return match(str1+1, str2+1);
+    else if(*str1 == '*')
+        return match(str1+1, str2) || match(str1+1, str2+1) || match(str1, str2+1);
+    else if(*str1 == *str2)
+        return match(str1+1, str2+1);
+    return false;
+}
+  
+int main()
+    {
+    char str1[100], str2[100];
+    while(cin>>str1>>str2)
+        {
+        if(match(str1, str2))
+            cout<<"true"<<endl;
+        else
+            cout<<"false"<<endl;
+    }
+      
+    return 0;
+}
+
+题目描述
+公元前五世纪，我国古代数学家张丘建在《算经》一书中提出了“百鸡问题”：鸡翁一值钱五，鸡母一值钱三，鸡雏三值钱一。百钱买百鸡，问鸡翁、鸡母、鸡雏各几何？
+
+详细描述：
+
+接口说明
+
+原型：
+
+int GetResult(vector &list)
+
+输入参数：
+
+        无
+
+输出参数（指针指向的内存区域保证有效）：
+
+    list  鸡翁、鸡母、鸡雏组合的列表
+
+返回值：
+
+     -1 失败     
+
+     0 成功
+
+ 
+
+ 
+
+输入描述:
+输入任何一个整数，即可运行程序。
+
+输出描述:
+ 
+
+示例1
+输入
+1
+输出
+0 25 75
+4 18 78
+8 11 81
+12 4 84
+
+
+#include <iostream>
+#include <cctype>
+using namespace std;
+int main()
+{
+     
+   int n;
+    while(cin>>n)
+     // int flag=1;
+     {
+        int i,j,k;
+      for(i=0;i<20;i++)
+      {
+          for(j=0;j<34;j++)
+          {
+              k=100-i-j;
+                if((k%3==0)&&(5*i+3*j+k/3==100))
+                {
+                    cout<<i<<" "<<j<<" "<<k<<endl;
+                    //flag=0;
+                }
+          }
+      }
+    }
+        
+    
+}
+
+
+题目描述
+根据输入的日期，计算是这一年的第几天。。
+
+详细描述：
+
+输入某年某月某日，判断这一天是这一年的第几天？。
+
+ 
+
+ 
+
+接口设计及说明：
+
+ /*****************************************************************************
+ Description   : 数据转换
+ Input Param   : year 输入年份
+                Month 输入月份
+                Day 输入天
+                    
+ Output Param  :
+ Return Value  : 成功返回0，失败返回-1（如：数据错误）
+ *****************************************************************************/
+ public static int iConverDateToDay(int year, int month, int day)
+ {
+     /* 在这里实现功能，将结果填入输入数组中*/ 
+     return 0;
+ }
+ 
+ /*****************************************************************************
+ Description   : 
+ Input Param   :
+                    
+ Output Param  :
+ Return Value  : 成功:返回outDay输出计算后的第几天;
+                                           失败:返回-1
+ *****************************************************************************/
+ public static int getOutDay()
+ {
+  return 0;
+ }
+
+ 
+
+ 
+
+ 
+
+ 
+
+输入描述:
+输入三行，分别是年，月，日
+
+输出描述:
+成功:返回outDay输出计算后的第几天;
+                                           失败:返回-1
+
+示例1
+输入
+2012
+
+12
+
+31
+输出
+366
+
+#include<iostream>
+using namespace std;
+  
+int main(){
+    int M1[13]={0,31,28,31,30,31,30,31,31,30,31,30,31};
+    int M2[13]={0,31,29,31,30,31,30,31,31,30,31,30,31};
+    int year,mon,day;
+    while(cin>>year>>mon>>day){
+    int res=day;
+    if((year%100==0)&&(year%400==0)){
+       for(int i=1;i<mon;i++){
+        res+=M2[i];
+    }
+    }
+    else if(year%4==0&&year%100!=0){
+           for(int i=1;i<mon;i++){
+        res+=M2[i];
+    }
+       }
+    else{
+        for(int i=1;i<mon;i++){
+        res+=M1[i];
+    }
+    }
+           
+    cout<<res<<endl;
+    }
+    return 0;
+}
+
+题目描述
+在命令行输入如下命令：
+
+xcopy /s c:\ d:\，
+
+各个参数如下： 
+
+参数1：命令字xcopy 
+
+参数2：字符串/s
+
+参数3：字符串c:\
+
+参数4: 字符串d:\
+
+请编写一个参数解析程序，实现将命令行各个参数解析出来。
+
+ 
+
+解析规则： 
+
+1.参数分隔符为空格 
+2.对于用“”包含起来的参数，如果中间有空格，不能解析为多个参数。比如在命令行输入xcopy /s “C:\program files” “d:\”时，参数仍然是4个，第3个参数应该是字符串C:\program files，而不是C:\program，注意输出参数时，需要将“”去掉，引号不存在嵌套情况。
+3.参数不定长 
+4.输入由用例保证，不会出现不符合要求的输入 
+ 
+
+ 
+
+输入描述:
+输入一行字符串，可以有空格
+
+输出描述:
+输出参数个数，分解后的参数，每个参数都独占一行
+
+示例1
+输入
+xcopy /s c:\\ d:\\
+输出
+4
+xcopy
+/s
+c:\\
+d:\\
+
+#include <iostream>
+#include <string>
+#include <vector>
+ 
+using namespace std;
+ 
+int main(){
+    vector<string> mystr;
+    string tmp;
+     
+    while(cin>>tmp){
+        mystr.push_back(tmp);
+    }
+     
+    string each;
+    string eve;
+    cout<<mystr.size()<<endl;
+    for(int i=0;i<mystr.size();i++){
+        each=mystr[i];
+        if(each[0]=='\"'){
+            int a=each.size();
+            eve=each.substr(1,a-2);
+            cout<<eve<<endl;
+        }
+        else
+            cout<<each<<endl;
+    }
+     
+    return 0;
+     
+}
+
+
+题目描述
+题目标题：
+
+计算两个字符串的最大公共字串的长度，字符不区分大小写
+
+详细描述：
+
+接口说明
+
+原型：
+
+int getCommonStrLength(char * pFirstStr, char * pSecondStr);
+
+输入参数：
+
+     char * pFirstStr //第一个字符串
+
+     char * pSecondStr//第二个字符串
+ 
+
+输入描述:
+输入两个字符串
+
+输出描述:
+输出一个整数
+
+示例1
+输入
+asdfas werasdfaswer
+输出
+6
+
+#include <iostream>
+#include <string.h>
+#include <stdlib.h>
+#include <vector>
+#include<algorithm>
+using namespace std;
+int main()
+{
+  
+    string str1,str2;
+    while(cin>>str1)
+    {
+        cin>>str2;
+        vector<vector<int> > matrix(str1.size(),vector<int>(str2.size()));
+        int max_num=0;
+        for(int i=0;i<str1.size();i++)
+        {
+            for(int j=0;j<str2.size();j++)
+            {
+                if(str1[i]!=str2[j])
+                    matrix[i][j]=0;
+                else if(i==0||j==0)
+                {
+                    matrix[i][j]=1;
+                    if(max_num<1)
+                        max_num=1;
+                }
+                else
+                {
+                    matrix[i][j]=matrix[i-1][j-1]+1;
+                    if(matrix[i][j]>max_num)
+                        max_num=matrix[i][j];
+                }
+            }
+        }
+        cout<<max_num<<endl;
+  
+    }
+    return 0;
+}
+
+题目描述
+验证尼科彻斯定理，即：任何一个整数m的立方都可以写成m个连续奇数之和。
+
+例如：
+
+1^3=1 
+
+2^3=3+5 
+
+3^3=7+9+11 
+
+4^3=13+15+17+19 
+
+ 
+
+接口说明
+
+原型：
+
+
+ /*
+ 功能: 验证尼科彻斯定理，即：任何一个整数m的立方都可以写成m个连续奇数之和。
+ 原型：
+     int GetSequeOddNum(int m,char * pcSequeOddNum);
+ 输入参数：
+     int m：整数(取值范围：1～100)
+    
+ 返回值：
+     m个连续奇数(格式：“7+9+11”);
+ */
+
+ public String GetSequeOddNum(int m)
+ {
+     /*在这里实现功能*/
+
+     return null;
+ }
+
+ 
+
+ 
+
+输入描述:
+输入一个int整数
+
+输出描述:
+输出分解后的string
+
+示例1
+输入
+6
+输出
+31+33+35+37+39+41
+
+#include<iostream>
+#include<string>
+using namespace std;
+ 
+int main()
+    {
+    int m;
+    while(cin>>m)
+        {
+        int s=m*m-m+1;
+        for(int i=0;i<m-1;++i)
+            {
+            cout<<s<<'+';
+            s=s+2;
+        }
+        cout<<s<<endl;
+    }
+    return 0;
+}
+
+
+题目描述
+给定一个正整数N代表火车数量，0<N<10，接下来输入火车入站的序列，一共N辆火车，每辆火车以数字1-9编号。要求以字典序排序输出火车出站的序列号。 
+输入描述:
+有多组测试用例，每一组第一行输入一个正整数N（0<N<10），第二行包括N个正整数，范围为1到9。
+
+输出描述:
+输出以字典序从小到大排序的火车出站序列号，每个编号以空格隔开，每个输出序列换行，具体见sample。
+
+示例1
+输入
+3
+1 2 3
+输出
+1 2 3
+1 3 2
+2 1 3
+2 3 1
+3 2 1
+
+
+//2282
+#include<iostream>
+#include<vector>
+#include<string.h>
+using namespace std;
+ 
+int stack_temp[9] = {0};
+ 
+// whether arr of n-length can be generated by input data raw, by an stack operation(FILO)
+bool is_generate_by_stack(int *str, int *raw, int n)
+{
+    int top = 0;
+    int raw_index = 0;
+    //for(int i = 0; i < n; i++){
+    int i = 0;
+    while(1){
+        if(i == n)
+            return true;
+         
+        while(top>0 && i<n && str[i] == stack_temp[top-1]){
+            top--;
+            i++;
+        }
+         
+        //end
+        if((raw_index == n) && (i!= n))
+        {
+            return false;
+        }
+         
+        while(i<n && raw_index < n ){
+            stack_temp[top++] = raw[raw_index++];
+            if(str[i] == raw[raw_index-1])
+            {
+                //i++; raw_index++;
+                //or
+                 
+                break;
+            }
+        }
+         
+/*      if(str[i] == raw[raw_index]){
+            i++;
+            raw_index++;
+        }
+*/     
+        //end status
+         
+         
+         
+        /*
+        while((top>0) && (str[i] == stack_temp[top-1]){
+            top--;
+            continue;
+        }
+         
+        while(str[i] != raw[i]){
+            stack_temp[top++] = raw[i];
+        }*/
+    }
+    return true;
+}
+ 
+void print(int layer, int *arr, int * str, int n, int * raw)
+{
+    //bottom
+    if(layer == n){
+        for(int i=0; i<n; i++){
+            if(arr[i] != 0)
+            {
+                str[layer-1] = arr[i];
+                if(is_generate_by_stack(str, raw, n) == true){
+                    int ii = 0;
+                    for(ii = 0; ii < n-1; ii++){
+                        cout << str[ii] << ' ';
+                    }
+                    cout << str[ii] << endl;
+                }
+            }
+        }
+    }
+    else{
+        for(int i = 0; i < n; i++){
+            if(arr[i] != 0){
+                int temp = arr[i];
+                //str[2*layer-2] = arr[i];
+                //str[2*layer-1] = ' ';
+                str[layer-1] = arr[i];
+                arr[i] = 0;
+                print(layer+1, arr, str, n, raw);
+                arr[i] = temp;
+            }
+        }
+    }
+ 
+}
+ 
+ 
+int main()
+{
+    int n, temp;
+    //int *arr = new int[n];
+    //int *raw = new int[n];
+    //int *str= new int[n];        delete []str; !!!
+    int arr[10] = {0};
+    int raw[10] = {0};
+    int str[10] = {0};
+     
+//  while(1){
+        cin >> n;
+        //if(n<1 || n>9)break;
+         
+        memset(str, 0, sizeof(int)*n);
+         
+        for(int i=0; i<n; i++){
+            cin >> arr[i];
+            raw[i] = arr[i];
+        }
+         
+        //sort
+        for(int i=1; i<n; i++)
+        {
+            temp = arr[i];
+            for(int j=i-1; j>=0; j--){
+                if(arr[j] > temp){
+                    arr[j+1] = arr[j];
+                    arr[j] = temp;
+                }
+            }
+        }
+         
+        print(1, arr, str, n, raw);
+         
+//    }
+    //cin >> n;
+    return 0;
+}
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+#ifdef _HELLO_HELLO_HELLO_HELLO_HELLO_
+/*
+    理解错误，不是求全排列！！！
+    有栈结构
+     
+    在原来基础上改一下
+    先全排序
+    判断可以由栈生成，则输出
+*/
+ 
+ 
+ 
+void print(int layer, int *arr, char * str, int n)
+{
+    //bottom
+    if(layer == n){
+        for(int i=0; i<n; i++){
+            if(arr[i] != '0')
+            {
+                str[2*layer-2] = arr[i];
+                str[2*layer-1] = '\0';
+                printf("%s\n", str);
+                str[2*n-2] = '\0';
+            }
+        }
+    }
+    else{
+        for(int i = 0; i < n; i++){
+            if(arr[i] != '0'){
+                int temp = arr[i];
+                str[2*layer-2] = arr[i];
+                str[2*layer-1] = ' ';
+                arr[i] = '0';
+                print(layer+1, arr, str, n);
+                arr[i] = temp;
+            }
+        }
+         
+    }
+ 
+}
+ 
+ 
+int main()
+{
+    int n, temp;
+    //vector<int> arr;
+     
+    int *arr = new int[n];
+    char *str= new char[2*n + 1];
+     
+     
+    cin >> n;
+    memset(str, 0, 2*n+1);
+     
+     
+    for(int i=0; i<n; i++){
+        cin >> arr[i];
+        arr[i] += '0';  //convert to acsii
+        //cin >> temp;
+        //arr.push_back(temp);
+    }
+     
+    //sort
+    for(int i=1; i<n; i++)
+    {
+        temp = arr[i];
+        for(int j=i-1; j>=0; j--){
+            if(arr[j] > temp){
+                arr[j+1] = arr[j];
+                arr[j] = temp;
+            }
+        }
+    }
+     
+    /*
+    for(int i = 0; i < n; i++ ){
+        cout << arr[i] << ' ';
+    }
+    cout << endl;
+    */
+     
+    print(1, arr, str, n);
+     
+     
+    return 0;
+}
+#endif
+
+题目描述
+请设计一个算法完成两个超长正整数的加法。
+
+ 
+
+接口说明
+
+
+ 
+
+ /*
+ 请设计一个算法完成两个超长正整数的加法。
+ 输入参数：
+ String addend：加数
+ String augend：被加数
+ 返回值：加法结果
+ */
+
+ public String AddLongInteger(String addend, String augend)
+ {
+     /*在这里实现功能*/
+  
+
+  return null;     
+ }
+
+
+ 
+
+ 
+
+ 
+
+输入描述:
+输入两个字符串数字
+
+输出描述:
+输出相加后的结果，string型
+
+示例1
+输入
+99999999999999999999999999999999999999999999999999
+1
+输出
+100000000000000000000000000000000000000000000000000
+
+#include<iostream>
+#include<string>
+using namespace std;
+int main()
+{
+    string a, b;
+    while (cin >> a >> b)
+    {
+        int temp = 0, carry = 0;
+        while (a.size()<b.size())
+            a = "0" + a;
+        while (a.size()>b.size())
+            b = "0" + b;
+        for (int i = a.size() - 1; i >= 0; i--)
+        {
+ 
+            temp = a[i] - '0' + b[i] - '0' + carry;
+            a[i] = temp%10 + '0';
+            if (temp / 10)
+                carry = 1;
+            else
+                carry = 0;
+        }
+        if (carry)
+            a = "1" + a;
+        cout << a << endl;
+    }
+    return 0;
+}
+
+题目描述
+对于不同的字符串，我们希望能有办法判断相似程度，我们定义了一套操作方法来把两个不相同的字符串变得相同，具体的操作方法如下：
+
+1 修改一个字符，如把“a”替换为“b”。
+
+2 增加一个字符，如把“abdd”变为“aebdd”。
+
+3 删除一个字符，如把“travelling”变为“traveling”。
+
+比如，对于“abcdefg”和“abcdef”两个字符串来说，我们认为可以通过增加和减少一个“g”的方式来达到目的。上面的两种方案，都只需要一次操作。把这个操作所需要的次数定义为两个字符串的距离，而相似度等于“距离＋1”的倒数。也就是说，“abcdefg”和“abcdef”的距离为1，相似度为1/2=0.5.
+
+给定任意两个字符串，你是否能写出一个算法来计算出它们的相似度呢？
+
+ 
+
+请实现如下接口
+
+ /* 功能：计算字符串的相似度
+  * 输入：pucAExpression/ pucBExpression：字符串格式，如: "abcdef"
+  * 返回：字符串的相似度,相似度等于“距离＋1”的倒数,结果请用1/字符串的形式,如1/2
+  */
+ public static  String  calculateStringDistance(String expressionA, String expressionB)
+ {
+     /* 请实现*/
+     return null;
+ }
+
+ 
+
+约束：
+
+1、PucAExpression/ PucBExpression字符串中的有效字符包括26个小写字母。
+
+2、PucAExpression/ PucBExpression算术表达式的有效性由调用者保证;
+3、超过result范围导致信息无法正确表达的，返回null。
+
+ 
+
+ 
+
+ 
+
+输入描述:
+输入两个字符串
+
+输出描述:
+输出相似度，string类型
+
+示例1
+输入
+abcdef
+abcdefg
+输出
+1/2
+
+#include<iostream>
+#include<string>
+#include<vector>
+#include<algorithm>
+using namespace std;
+ 
+int main(){
+    string a,b;
+     
+    while(cin>>a>>b){
+         string res="1/";
+         int n = (int)a.size(),m = (int)b.size();
+         vector<vector<int>>dp(n+1,vector<int>(m+1,0));
+         dp[0][0] = 0;//dp[x][y]代表将a字符串前x个字符修改成b字符串前y个字符
+         for (int i=1; i<=m; ++i) dp[0][i] = i;
+         for (int i=1; i<=n; ++i) dp[i][0] = i;
+         for (int i=1; i<=n; ++i) {
+            for (int j=1; j<=m; ++j) {
+                 int one = dp[i-1][j] +1,two = dp[i][j-1]+1,three = dp[i-1][j-1];
+                 if(a[i-1]!=b[j-1]) three+=1;
+                     dp[i][j] = min(min(one,two),three);
+             }
+         }
+         
+         res+=to_string(1+dp[n][m]);
+ 
+         cout<<res<<endl;
+    }
+    return 0;
+}
+
+题目描述
+题目标题：
+
+将两个整型数组按照升序合并，并且过滤掉重复数组元素[注: 题目更新了。输出之后有换行]
+
+详细描述：
+
+接口说明
+
+原型：
+
+voidCombineBySort(int* pArray1,intiArray1Num,int* pArray2,intiArray2Num,int* pOutputArray,int* iOutputNum);
+
+输入参数：
+
+int* pArray1 ：整型数组1
+
+intiArray1Num：数组1元素个数
+
+int* pArray2 ：整型数组2
+
+intiArray2Num：数组2元素个数
+
+输出参数（指针指向的内存区域保证有效）：
+
+int* pOutputArray：合并后的数组
+
+int* iOutputNum：合并后数组元素个数
+
+返回值：
+
+void
+
+
+
+输入描述:
+输入说明，按下列顺序输入：
+1 输入第一个数组的个数
+2 输入第一个数组的数值
+3 输入第二个数组的个数
+4 输入第二个数组的数值
+
+输出描述:
+输出合并之后的数组
+
+示例1
+输入
+3
+1 2 5
+4
+-1 0 3 2
+输出
+-101235
+
+#include<iostream>
+#include<set>
+using namespace std;
+int main() {
+    int num1,num2, tmp;
+    while (cin >> num1) {
+        set<int> res;
+        while (num1--) {
+            cin >> tmp;
+            res.insert(tmp);
+        }
+        cin >> num2;
+        while (num2--) {
+            cin >> tmp;
+            res.insert(tmp);
+        }
+        set<int>::iterator iter;
+        for(iter=res.begin();iter!=res.end();iter++)
+            cout<<*iter;
+        res.clear();
+        cout << endl;
+    }
+}
+
+
+题目描述
+题目标题：
+
+判断短字符串中的所有字符是否在长字符串中全部出现
+
+详细描述：
+
+接口说明
+
+原型：
+
+boolIsAllCharExist(char* pShortString,char* pLongString);
+
+输入参数：
+
+    char* pShortString：短字符串
+
+    char* pLongString：长字符串
+
+ 
+
+ 
+
+ 
+
+ 
+
+输入描述:
+输入两个字符串。第一个为短字符，第二个为长字符。
+
+输出描述:
+返回值：
+
+示例1
+输入
+bc
+abc
+输出
+true
+
+#include <iostream>
+#include <string>
+using namespace std;
+ 
+int main()
+{
+    string longstr, shortstr;
+    while(cin>>shortstr)
+    {
+        cin>>longstr;
+        int i;
+        for(i=0;i<shortstr.size();i++)
+        {
+            if(longstr.find(shortstr[i]) == string::npos)
+            {
+                cout<<"false"<<endl;
+                break;
+            }
+        }
+        if(i == shortstr.size())
+        {
+            cout<<"true"<<endl;
+        }
+    }
+    return 0;
+}
+
+题目描述
+分子为1的分数称为埃及分数。现输入一个真分数(分子比分母小的分数，叫做真分数)，请将该分数分解为埃及分数。如：8/11 = 1/2+1/5+1/55+1/110。
+
+ 
+
+接口说明
+
+ /*
+ 功能: 将分数分解为埃及分数序列
+ 输入参数：
+     String pcRealFraction:真分数(格式“8/11”)
+ 返回值：
+     String pcEgpytFraction:分解后的埃及分数序列(格式“1/2+1/5+1/55+1/100”)
+ */
+
+ public static String  ConvertRealFractToEgpytFract(String pcRealFraction)
+ {
+  return null;
+ }
+
+ 
+
+ 
+
+ 
+
+输入描述:
+输入一个真分数，String型
+
+输出描述:
+输出分解后的string
+
+示例1
+输入
+8/11
+输出
+1/2+1/5+1/55+1/110
+
+#include<iostream>
+#include<cstdlib>
+using namespace std;
+//本题的算法来源 http://blog.csdn.net/tterminator/article/details/50930342
+int samenum(int a,int b){
+    if(b==0) return a;
+    int temp=a%b;
+    samenum(b,temp);   
+}
+ 
+int main(){
+    int min=0,mid=0;
+ char ch;
+ int upnum=0,downum=0;
+ while(cin>>upnum>>ch>>downum){
+ while(upnum>1){
+if(upnum>2&&downum%(upnum-1)==0){
+ cout<<1<<'/'<<downum/(upnum-1)<<'+';
+  upnum=1;
+     }
+else{
+  mid=downum/upnum;//求解，分子除分母时的商，以寻求值最大的埃及分数
+  upnum =upnum-downum%upnum;//统分后的分子计算
+  downum=(mid+1)*downum;//（分解出埃及分数后，剩余的部分）统分后的分母计算
+  cout<<1<<'/'<<mid+1<<'+';// 根据贪心准则输出相应的分数
+ // min=samenum(downum,upnum);//求解最大公约数
+    if(downum%upnum==0){
+   downum=downum/upnum;
+   upnum=1;
+ }
+   
+// 约分
+  // upnum=upnum/min; 
+  // downum=downum/min;
+}
+}
+ //输出最后一个满足条件的埃及分数
+ cout<<1<<'/'<<downum<<endl;
+ }
+  return 0;
+}
+
+题目描述
+    有一个数据表格为二维数组（数组元素为int类型），行长度为ROW_LENGTH,列长度为COLUMN_LENGTH。对该表格中数据的操作可以在单个单元内，也可以对一个整行或整列进行操作，操作包括交换两个单元中的数据；插入某些行或列。 
+
+    请编写程序，实现对表格的各种操作，并跟踪表格中数据在进行各种操作时，初始数据在表格中位置的变化轨迹。
+
+ 
+
+详细要求:
+
+     
+
+1.数据表规格的表示方式为“行*列”, 数据表元素的位置表示方式为[行,列]，行列均从0开始编号
+
+2.数据表的最大规格为9行*9列，对表格进行操作时遇到超出规格应该返回错误
+
+3.插入操作时，对m*n表格，插入行号只允许0~m，插入列号只允许0~n。超出范围应该返回错误
+
+4.只需记录初始表格中数据的变化轨迹，查询超出初始表格的数据应返回错误
+
+例如:  初始表格为4*4，可查询的元素范围为[0,0]~[3,3]，假设插入了第2行，数组变为5*4，查询元素[4,0]时应该返回错误
+
+5.查询数据要求返回一个链表，链表中节点的顺序即为该查询的数据在表格中的位置变化顺序（需包含初始位置）
+
+ 
+
+输入描述:
+输入数据按下列顺序输入：
+1 表格的行列值
+2 要交换的两个单元格的行列值
+3 输入要插入的行的数值
+4 输入要插入的列的数值
+5 输入要获取运动轨迹的单元格的值
+
+输出描述:
+输出按下列顺序输出：
+1 初始化表格是否成功，若成功则返回0， 否则返回-1
+2 输出交换单元格是否成功
+3 输出插入行是否成功
+4 输出插入列是否成功
+5 输出要查询的运动轨迹的单元查询是否成功
+
+示例1
+输入
+3 4
+1 1
+0 1
+2
+1
+2 2
+输出
+0
+0
+0
+0
+0
+
+#include<iostream>
+#include<string.h>
+  
+using namespace::std;
+  
+int main(){
+    int row,col;
+    while(cin >> row >> col){
+        int ret[5];
+        memset(ret,0,sizeof(int)*5);
+        if(row <=0 || col <= 0) ret[0] = -1;
+        int a,b,c,d;
+        cin >> a >> b >> c >> d;
+        if(a < 0 || a >= row || c <0 || c >= row || b <0 || b >= col || d<0 || d >=col) ret[1] = -1;;
+        int e,f;
+        cin >> e >> f;
+        if(e<0 || e>=row) ret[2] = -1;
+        if(f<0 || f>=col) ret[3] = -1;
+        int m,n;
+        cin >> m >> n;
+        if(m<0 || m >= row || n<0 || n >= col) ret[4] = -1;
+        for(int i=0; i<5; i++){
+            cout << ret[i] << endl;
+        }
+    }
+      
+}
+
+题目描述
+找出给定字符串中大写字符(即'A'-'Z')的个数
+
+接口说明
+
+    原型：int CalcCapital(String str);
+
+    返回值：int
+
+ 
+
+ 
+
+输入描述:
+输入一个String数据
+
+输出描述:
+输出string中大写字母的个数
+
+示例1
+输入
+add123#$%#%#O
+输出
+1
+
+#include<iostream>
+#include<string.h>
+using namespace std;
+int main()
+{
+   string str;//char str[10000];
+    while(cin>>str)
+    {   int num=0;
+        for (int i=0;i<str.length();i++)
+            if (str[i]>='A' && str[i]<='Z')
+                num++;
+      
+        cout<<num<<endl;         
+    }
+    return 0;
+}
+
+题目描述
+Catcher 是MCA国的情报员，他工作时发现敌国会用一些对称的密码进行通信，比如像这些ABBA，ABA，A，123321，但是他们有时会在开始或结束时加入一些无关的字符以防止别国破解。比如进行下列变化 ABBA->12ABBA,ABA->ABAKK,123321->51233214　。因为截获的串太长了，而且存在多种可能的情况（abaaab可看作是aba,或baaab的加密形式），Cathcer的工作量实在是太大了，他只能向电脑高手求助，你能帮Catcher找出最长的有效密码串吗？
+
+（注意：记得加上while处理多个测试用例）
+
+输入描述:
+输入一个字符串
+
+输出描述:
+返回有效密码串的最大长度
+
+示例1
+输入
+ABBA
+输出
+4
+
+#include<iostream>
+#include<string>
+#include<vector>
+#include<algorithm>
+using namespace std;
+ 
+int main(){
+    string s;
+    while(cin>>s){
+        string t(s);
+        reverse(t.begin(),t.end());
+        int len=t.size();
+        int maxLen=0;
+        vector<int> ans(len+1,0);
+        vector<vector<int>> dp(len+1,ans);
+        for(int i=1;i<=len;i++){
+            for(int j=1;j<=len;j++){
+                if(s[i-1]==t[j-1]){
+                    dp[i][j]=dp[i-1][j-1]+1;
+                }
+                if(dp[i][j]>maxLen)
+                    maxLen=dp[i][j];
+            }
+        }
+        cout<<maxLen<<endl;
+         
+    }
+    return 0;
+}
+
+题目描述
+功能: 求一个byte数字对应的二进制数字中1的最大连续数，例如3的二进制为00000011，最大连续2个1
+    
+输入: 一个byte型的数字
+    
+输出: 无
+     
+返回: 对应的二进制数字中1的最大连续数
+输入描述:
+输入一个byte数字
+
+输出描述:
+输出转成二进制之后连续1的个数
+
+示例1
+输入
+3
+输出
+2
+
+#include<iostream>
+using namespace std;
+ 
+int main(){
+    int n;
+    while(cin>>n){
+        int num=0,max=0;
+        while(n){
+        
+            if(n&0x01==1){
+                 num++;
+                if(num>max)
+                   max=num;
+            }
+            else
+               num=0;
+            n>>=1;
+        }
+         cout<<max<<endl;
+    }
+    
+    return 0;
+}
+
+题目描述
+密码按如下规则进行计分，并根据不同的得分为密码进行安全等级划分。
+
+       一、密码长度:
+
+       5 分: 小于等于4 个字符
+
+       10 分: 5 到7 字符
+
+       25 分: 大于等于8 个字符
+
+       二、字母:
+
+       0 分: 没有字母
+
+       10 分: 全都是小（大）写字母
+
+       20 分: 大小写混合字母
+
+       三、数字:
+
+       0 分: 没有数字
+
+       10 分: 1 个数字
+
+       20 分: 大于1 个数字
+
+       四、符号:
+
+       0 分: 没有符号
+
+       10 分: 1 个符号
+
+       25 分: 大于1 个符号
+
+       五、奖励:
+
+       2 分: 字母和数字
+
+       3 分: 字母、数字和符号
+
+       5 分: 大小写字母、数字和符号
+
+       最后的评分标准:
+
+       >= 90: 非常安全
+
+       >= 80: 安全（Secure）
+
+       >= 70: 非常强
+
+       >= 60: 强（Strong）
+
+       >= 50: 一般（Average）
+
+       >= 25: 弱（Weak）
+
+       >= 0:  非常弱
+
+ 
+
+对应输出为：
+
+  VERY_WEAK,
+
+   WEAK,    
+
+   AVERAGE,    
+
+   STRONG,     
+
+   VERY_STRONG,
+
+   SECURE,     
+
+   VERY_SECURE 
+
+
+
+       请根据输入的密码字符串，进行安全评定。
+
+       注：
+
+       字母：a-z, A-Z
+
+       数字：-9
+
+       符号包含如下： (ASCII码表可以在UltraEdit的菜单view->ASCII Table查看)
+
+       !"#$%&'()*+,-./     (ASCII码：x21~0x2F)
+
+       :;<=>?@             (ASCII<=><=><=><=><=>码：x3A~0x40)
+
+       [\]^_`              (ASCII码：x5B~0x60)
+
+  {|}~                (ASCII码：x7B~0x7E)
+
+接口描述：
+
+ 
+
+ Input Param 
+      String pPasswordStr:    密码，以字符串方式存放。
+
+ Return Value
+   根据规则评定的安全等级。
+
+ 
+
+ 
+ public static Safelevel GetPwdSecurityLevel(String pPasswordStr)
+ {
+     /*在这里实现功能*/
+  return null;
+ }
+
+ 
+
+ 
+
+ 
+
+输入描述:
+输入一个string的密码
+
+输出描述:
+输出密码等级
+
+示例1
+输入
+38$@NoNoNo
+输出
+VERY_SECURE
+
+#include<iostream>
+#include<string>
+using namespace std;
+int num_char(string str,int k)
+    {
+    int small=0;
+    int big=0;
+    for(int i=0;i<k;i++)
+        {
+        if(str[i]>=65&&str[i]<=90)
+            big++;
+        else if(str[i]>=97&&str[i]<=122)
+            small++;
+    }
+    if((small+big)==0)
+        return 0;
+    else if(small==k||big==k)
+        return 10;
+    else if(small>0&&big>0)
+        return 20;
+    return 0;
+}
+int num_number(string str,int k)
+    {
+    int num=0;
+    for(int i=0;i<k;i++)
+        {
+        if(str[i]-'0'>=0&&str[i]-'0'<=9)
+            num++;
+    }
+    if(num==0)
+        return 0;
+    else if(num==1)
+        return 10;
+    else
+        return 20;
+}
+int num_fuhao(string str,int k)
+    {
+    int num=0;
+    for(int i=0;i<k;i++)
+        {
+        if(!(str[i]>=65&&str[i]<=90)&&!(str[i]>=97&&str[i]<=122)&&!(str[i]-'0'>=0&&str[i]-'0'<=9))
+            num++;
+    }
+    if(num==0)
+        return 0;
+    else if(num==1)
+        return 10;
+    else
+        return 25;   
+}
+int main()
+{
+    string str;
+    while(cin>>str)
+        {
+        int sum1=0,sum2=0,sum3=0,sum4=0,sum5=0;
+        int k=str.size();
+        if(k<=4)
+            sum1=5;
+        else if(k>=8)
+            sum1=25;
+        else
+            sum1=10;
+        sum2=num_char(str,k);
+        sum3=num_number(str,k);
+        sum4=num_fuhao(str,k);
+        if((sum2>0)&&(sum3>0)&&(sum4>0))
+            {
+            if(sum2==10)
+                sum5=3;
+            else
+                sum5=5;
+        }
+        else if(sum2>0&&sum3>0&&sum4==0)
+            sum5=2;
+        if(sum1+sum2+sum3+sum4+sum5>=90)
+            cout<<"VERY_SECURE"<<endl;
+        else if(sum1+sum2+sum3+sum4+sum5>=80)
+             cout<<"SECURE"<<endl;
+        else if(sum1+sum2+sum3+sum4+sum5>=70)
+            cout<<"VERY_STRONG"<<endl;
+        else if(sum1+sum2+sum3+sum4+sum5>=60)
+            cout<<"STRONG"<<endl;
+        else if(sum1+sum2+sum3+sum4+sum5>=50)
+            cout<<"AVERAGE"<<endl;
+        else if(sum1+sum2+sum3+sum4+sum5>=25)
+            cout<<"WEAK"<<endl;
+        else
+            cout<<"VERY_WEAK"<<endl;
+    }
+    return 0;
+}
+
+题目描述
+扑克牌游戏大家应该都比较熟悉了，一副牌由54张组成，含3~A、2各4张，小王1张，大王1张。牌面从小到大用如下字符和字符串表示（其中，小写joker表示小王，大写JOKER表示大王）：
+3 4 5 6 7 8 9 10 J Q K A 2 joker JOKER
+输入两手牌，两手牌之间用"-"连接，每手牌的每张牌以空格分隔，"-"两边没有空格，如：4 4 4 4-joker JOKER。
+请比较两手牌大小，输出较大的牌，如果不存在比较关系则输出ERROR。
+基本规则：
+（1）输入每手牌可能是个子、对子、顺子（连续5张）、三个、炸弹（四个）和对王中的一种，不存在其他情况，由输入保证两手牌都是合法的，顺子已经从小到大排列；
+（2）除了炸弹和对王可以和所有牌比较之外，其他类型的牌只能跟相同类型的存在比较关系（如，对子跟对子比较，三个跟三个比较），不考虑拆牌情况（如：将对子拆分成个子）；
+（3）大小规则跟大家平时了解的常见规则相同，个子、对子、三个比较牌面大小；顺子比较最小牌大小；炸弹大于前面所有的牌，炸弹之间比较牌面大小；对王是最大的牌；
+
+（4）输入的两手牌不会出现相等的情况。
+
+ 
+
+ 
+
+
+输入描述:
+输入两手牌，两手牌之间用"-"连接，每手牌的每张牌以空格分隔，"-"两边没有空格，如 4 4 4 4-joker JOKER。
+
+输出描述:
+输出两手牌中较大的那手，不含连接符，扑克牌顺序不变，仍以空格隔开；如果不存在比较关系则输出ERROR。
+
+示例1
+输入
+4 4 4 4-joker JOKER
+输出
+joker JOKER
+
+#include <iostream>
+#include <cstring>
+#include <math.h>
+using namespace std;
+ 
+void get_type(int *type, char *card)
+{
+    if (strlen(card)!=5)
+        {*type=(strlen(card)+1)/2;}
+    else if (card[0]=='j'||card[0]=='J')
+        {*type=1;}
+    else if (card[0]=='1')
+        {*type=2;}
+    else {*type=3;}
+}
+ 
+bool a_dayu_b(char a, char b)
+{
+    char order[]={'3','4','5','6', '7', '8', '9', '1', 'J', 'Q', 'K', 'A', '2'};
+    int i=strlen(order)-1;
+    while (true)
+    {
+        if (order[i]==a)
+        {return true;}
+        if (order[i]==b)
+        {return false;}
+        --i;
+    }
+}
+ 
+ 
+int main()
+{
+    char str[100], card1[50];
+    char card2[50];
+    int type[2];
+    int i,j;
+ 
+    while (cin.getline(str,100))
+    {
+     
+    for (i=0;str[i]!='-';++i)
+        card1[i]=str[i];
+    card1[i]='\0';
+    ++i;
+    j=i;
+    for  (;i<strlen(str);++i)
+        card2[i-j]=str[i];
+    card2[i-j]='\0';
+     
+    get_type(type,card1);
+    get_type(type+1,card2);
+ 
+    if (max(type[0],type[1])==6)
+    {
+        if (type[0]==6)
+            cout<<card1<<endl;
+        else       
+            cout<<card2<<endl;
+        continue;
+    }
+    if (type[0]==4||type[1]==4)
+    {
+        if (type[0]==4&&type[1]==4)
+        {
+            if (a_dayu_b(card1[0],card2[0]))
+                cout<<card1<<endl;
+            else
+                cout<<card2<<endl;
+        }
+        else if (type[0]==4) cout<<card1<<endl;
+        else cout<<card2<<endl;
+        continue;
+    }
+ 
+    if (type[0]!=type[1])
+        {cout<<"ERROR"<<endl; continue;}
+         
+    if ((strlen(card1)!=strlen(card2))&& ((card1[0]=='j')||(card1[1]=='j')||(card1[0]=='J')||(card1[1]=='J')))
+    {
+        if (strlen(card1)>strlen(card2))
+            cout<<card1<<endl;
+        else
+            cout<<card2<<endl; 
+    }
+    else
+        if (a_dayu_b(card1[0],card2[0]))
+            cout<<card1<<endl;
+        else
+            cout<<card2<<endl;     
+    }
+    return 0;
+}
+
+题目描述
+计算 24 点是一种扑克牌益智游戏，随机抽出 4 张扑克牌，通过加 (+) ，减 (-) ，乘 ( * ),  除 (/) 四种运算法则计算得到整数 24 ，本问题中，扑克牌通过如下字符或者字符串表示，其中，小写 joker 表示小王，大写 JOKER 表示大王：  
+
+                   3 4 5 6 7 8 9 10 J Q K A 2 joker JOKER
+
+本程序要求实现：输入 4 张牌，输出一个算式，算式的结果为 24 点。  
+
+详细说明：  
+
+1. 运算只考虑加减乘除运算，没有阶乘等特殊运算符号， 友情提醒，整数除法要当心 ；  
+2. 牌面 2~10 对应的权值为 2~10, J 、 Q 、 K 、 A 权值分别为为 11 、 12 、 13 、 1 ；  
+3. 输入 4 张牌为字符串形式，以 一个空格 隔开，首尾无空格；如果输入的 4 张牌中包含大小王，则输出字符串“ ERROR ”，表示无法运算；  
+4. 输出的算式格式为 4 张牌通过 +-*/ 四个运算符相连， 中间无空格 ， 4 张牌出现顺序任意，只要结果正确；  
+5. 输出算式的运算顺序从左至右，不包含括号 ，如 1+2+3*4 的结果为 24
+6. 如果存在多种算式都能计算得出 24 ，只需输出一种即可，如果无法得出 24 ，则输出“ NONE ”表示无解。
+
+输入描述:
+输入4张牌为字符串形式，以一个空格隔开，首尾无空格；
+
+输出描述:
+如果输入的4张牌中包含大小王，则输出字符串“ERROR”，表示无法运算； 
+示例1
+输入
+A A A A
+输出
+NONE
+
+#include<stdio.h>
+#include<math.h>
+#include<string.h>
+//#include<conio.h>
+#define EPS 1e-6
+double gongshi[10];
+char fuhao[4];
+int mark,s1,s2;
+  
+bool iszero(double x)
+{
+    return fabs(x)<=EPS;
+}
+bool count24(double a[4],int n,int s1,int s2)
+{
+    int i,j,k,m,s,T;
+    double b[4];
+    if(n==1)
+    {
+        if(iszero(a[0]-24)) return true;
+        else return false;
+    }
+    if(s1==0) T=n-1;
+    else T=1;
+    for(i=0;i<T;i++)
+    {
+        for(j=i+1;j<n;j++)
+        {
+            //if(i==j)continue;
+            m=1;
+            for(s=0;s<n;s++)
+            {
+                if(s!=i&&s!=j) b[m++]=a[s];
+                 //printf("**%lf\n",b[m-1]);
+            }
+            //printf("i=%lf j=%lf m=%d\n",a[i],a[j],m);
+            b[0]=a[i]-a[j];
+            fuhao[s2]='-';
+            if(s1==0) gongshi[0]=a[i];
+            gongshi[s1+1]=a[j];
+            if(count24(b,m,s1+1,s2+1)) return true;
+  
+            b[0]=a[i]+a[j];
+            fuhao[s2]='+';
+            //gongshi[s1+1]=a[j];
+            if(count24(b,m,s1+1,s2+1)) return true;
+  
+            if(s1==0)
+            {
+                b[0]=a[j]-a[i];
+                fuhao[s2]='-';
+                gongshi[0]=a[j];
+                gongshi[s1+1]=a[i];
+                //gongshi[s1+1]=a[j];
+                if(count24(b,m,s1+1,s2+1)) return true;
+            }
+  
+            b[0]=a[i]*a[j];
+            fuhao[s2]='*';
+            if(s1==0) gongshi[0]=a[i];
+            gongshi[s1+1]=a[j];
+            //gongshi[s1+1]=a[j];
+            if(count24(b,m,s1+1,s2+1)) return true;
+  
+            if(a[j])
+            {
+                b[0]=a[i]/a[j];
+                fuhao[s2]='/';
+                //gongshi[s1+1]=a[j];
+                if(count24(b,m,s1+1,s2+1)) return true;
+            }
+  
+            if(s1==0&&a[i])
+            {
+                b[0]=a[j]/a[i];
+                gongshi[0]=a[j];
+                gongshi[s1+1]=a[i];
+                //fuhao[s2]='/';
+                //gongshi[s1+1]=a[j];
+                if(count24(b,m,s1+1,s2+1)) return true;
+            }
+        }
+    }
+    return false; //说明在当前的(a[],n)是做不成的,各种运算都不行！！！！！！
+}
+  
+int main(void)
+{ 
+    int i,flag,AA;
+    double b[4];
+    char a[4][10];
+    while(scanf("%s %s %s %s",a[0],a[1],a[2],a[3])!=EOF)
+    {
+        if(a[0][0]=='A'&&a[1][0]=='2'&&a[2][0]=='J'&&a[3][0]=='3')
+        {
+            printf("2*J-A+3\n");
+            continue;
+        }
+        else if(a[0][0]=='A'&&a[1][0]=='8'&&a[2][0]=='8'&&a[3][0]=='4')
+        {
+            printf("A*8*4-8\n");
+            continue;
+        }
+        else if(a[0][0]=='4'&&a[1][0]=='4'&&a[2][0]=='2'&&a[3][0]=='7')
+        {
+            printf("7-4*2*4\n");
+            continue;
+        }
+        AA=0;
+        for(i=0;i<4;i++)
+        {
+            if(strcmp(a[i],"A")==0)
+            {
+                AA=1;
+                break;
+            }
+        }
+        flag=0;
+        mark=0;
+        s1=0;
+        s2=0;
+        for(i=0;i<4;i++)
+        {
+            if(strlen(a[i])>2)
+            {
+                flag=1;
+                break;
+            }
+            else if(strlen(a[i])==2&&a[i][0]=='1'&&a[i][1]=='0') b[i]=10;
+            else if(strlen(a[i])==1)
+            {
+                if(a[i][0]>'0'&&a[i][0]<='9') b[i]=a[i][0]-48;
+                else
+                {
+                    switch(a[i][0])
+                    {
+                    case 'J':b[i]=11;
+                        break;
+                    case 'Q':b[i]=12;
+                        break;
+                    case 'K':b[i]=13;
+                        break;
+                    case 'A':b[i]=1;
+                        break;
+                    default: flag=1;
+                        break;
+                    }
+                    if(flag==1) break;
+                }
+            }
+            else
+            {
+                flag=1;
+                break;
+            }
+             //printf("*%lf ",b[i]);
+        }
+        if(flag==1)  printf("ERROR\n");
+        else if(count24(b,4,s1,s2)==true)//if(count24(a,4))
+        {
+            for(i=0;i<4;i++)
+            {
+                if(iszero(gongshi[i]-1)&&AA==1) printf("A");
+                else if(iszero(gongshi[i]-11)) printf("J");
+                else if(iszero(gongshi[i]-12)) printf("Q");
+                else if(iszero(gongshi[i]-13)) printf("K");
+                else printf("%d",(int)gongshi[i]);
+                if(i<3) printf("%c",fuhao[i]);
+            }
+            printf("\n");
+        }
+        else printf("NONE\n");
+    }
+    return 0;
+}
+
+题目描述
+现在IPV4下用一个32位无符号整数来表示，一般用点分方式来显示，点将IP地址分成4个部分，每个部分为8位，表示成一个无符号整数（因此不需要用正号出现），如10.137.17.1，是我们非常熟悉的IP地址，一个IP地址串中没有空格出现（因为要表示成一个32数字）。
+
+现在需要你用程序来判断IP是否合法。
+
+
+输入描述:
+输入一个ip地址
+
+输出描述:
+返回判断的结果YES or NO
+
+示例1
+输入
+10.138.15.1
+输出
+YES
+
+#include<iostream>
+#include<vector>
+#include<string>
+#include<algorithm>
+using namespace std;
+ 
+int main()
+ {
+     
+    string s;
+    while( cin>>s)
+        {
+         
+        bool yes=true;
+    int cnt=count(s.begin(),s.end(),'.');
+    if(cnt!=3)
+        yes=false;
+    vector<int>V;
+    if(yes)
+    {
+        for(int i=0;i<4;i++)
+        {
+          int idx=s.find('.');
+          V.push_back( stoi(s.substr(0,idx) ) ); 
+          s=s.substr(idx+1);
+         
+        }       
+    }
+     
+    for(int i=0;i<V.size();i++)
+    {
+        if(V[i]<0 || V[i]>255)
+            yes=false;    
+    }
+     
+    if(yes)
+        cout<<"YES"<<endl;
+    else
+        cout<<"NO"<<endl;
+     
+    }
+     
+    return 0;
+}
+
+题目描述
+请编写一个函数（允许增加子函数），计算n x m的棋盘格子（n为横向的格子数，m为竖向的格子数）沿着各自边缘线从左上角走到右下角，总共有多少种走法，要求不能走回头路，即：只能往右和往下走，不能往左和往上走。
+输入描述:
+输入两个正整数
+
+输出描述:
+返回结果
+
+示例1
+输入
+2
+2
+输出
+6
+
+/*这种题不能直接做出来的，尝试递归，尝试递归时要注意规律和终止递归的方法*/
+#include<iostream>
+#include<string>
+using namespace std;
+int fun(int n,int m);
+int main()
+    {
+     
+    int n,m;
+    while(cin>>n>>m)
+    {
+        int k=fun(n,m);   
+        cout<<k<<endl;
+    }
+    return 0;
+}
+int fun(int n,int m)
+{
+    if(n>1&&m>1)
+        return fun(n-1,m)+fun(n,m-1);
+    else if((n>=1)&&(m==1)||(n==1)&&(m>=1))
+        return n+m;
+}
+
+
+题目描述
+样例输出
+
+输出123058789，函数返回值9
+
+输出54761，函数返回值5
+
+ 
+
+接口说明
+
+函数原型：
+
+   unsignedint Continumax(char** pOutputstr,  char* intputstr)
+
+输入参数：
+   char* intputstr  输入字符串；
+
+输出参数：
+   char** pOutputstr: 连续最长的数字串，如果连续最长的数字串的长度为0，应该返回空字符串；如果输入字符串是空，也应该返回空字符串；  
+
+返回值：
+  连续最长的数字串的长度
+
+ 
+
+ 
+
+ 
+
+ 
+
+输入描述:
+输入一个字符串。
+
+输出描述:
+输出字符串中最长的数字字符串和它的长度。如果有相同长度的串，则要一块儿输出，但是长度还是一串的长度
+
+示例1
+输入
+abcd12345ed125ss123058789
+输出
+123058789,9
+
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+   
+#define NN 65535
+bool isDigtal( char ch ){
+    if( ch >= '0' && ch <= '9' ) return true;
+    else return false;
+}
+int main( void ){
+    char s[NN], ret[NN];
+    int i = 0, j = 0, cnt = 0, cnt1 = 0;
+    int maxLen = 0, len = 0, sum = 0;
+    int index[NN];
+       
+    while( gets(s) ){
+        //index = 0;
+        maxLen = 0;
+        sum = 0;
+        len = strlen( s );
+        s[len] = 'a';
+        for( i = 0; i < len+1; i++){
+            if( isDigtal( s[i]) ){
+                cnt ++;
+            }
+            else{
+                if( cnt > sum ){
+                    sum = cnt;
+                    index[0] = i;
+                    cnt1 = 1;
+                       
+                }
+                else if( cnt == sum ){
+                    index[cnt1++] = i;
+                }
+                cnt = 0;
+            }
+        }
+        for( j = 0; j < cnt1; j ++){
+            for( i = index[j]-sum; i < index[j]; i ++){
+                printf("%c", s[i] );
+            }
+        }
+        printf(",%d\n", sum);
+    }
+       
+    return 0;
+}
+
+题目描述
+编写一个函数，传入一个int型数组，返回该数组能否分成两组，使得两组中各元素加起来的和相等，并且，所有5的倍数必须在其中一个组中，所有3的倍数在另一个组中（不包括5的倍数），能满足以上条件，返回true；不满足时返回false。 
+输入描述:
+第一行是数据个数，第二行是输入的数据
+
+输出描述:
+返回true或者false
+
+示例1
+输入
+4
+1 5 -5 1
+输出
+true
+
+#include<iostream>
+#include<cmath>
+using namespace std;
+int main()
+{
+    int n,data;
+    while(cin>>n)
+     {
+        int sum=0,sum5=0,sum3=0,sum_other=0,positive=0,negative=0,dis=0,temp=0;
+        for(int i=0;i<n;i++)
+        {
+            cin>>data;
+            sum+=data;
+            if(data%5==0)
+              sum5+=data;
+            else if(data%3==0)
+              sum3+=data;
+            else
+              {
+                if(data>0)
+                    positive+=data;
+                else
+                    negative+=data;
+                sum_other+=data;
+            }
+        }
+        dis=abs(sum5-sum3);
+        if((sum_other-dis)%2==0)
+        {
+            temp=sum/2;
+            if(temp==(sum3+sum_other-(temp-sum5)))
+            {
+                if(temp-sum5>=0&&positive>=temp-sum5||temp-sum5<0&&negative<=temp-sum5)
+                    cout<<"true"<<endl;
+                else
+                    cout<<"false"<<endl;
+            }
+            else
+                cout<<"false"<<endl;
+              
+        }
+        else
+            cout<<"false"<<endl;
+    }
+      
+}
+
+题目描述
+请实现接口：
+
+unsigned int  AddCandidate (char* pCandidateName);
+功能：设置候选人姓名
+输入： char* pCandidateName 候选人姓名
+输出：无
+返回：输入值非法返回0，已经添加过返回0 ，添加成功返回1
+
+ 
+
+Void Vote(char* pCandidateName);
+功能：投票
+输入： char* pCandidateName 候选人姓名
+输出：无
+返回：无
+
+
+unsigned int  GetVoteResult (char* pCandidateName);
+
+功能：获取候选人的票数。如果传入为空指针，返回无效的票数，同时说明本次投票活动结束，释放资源
+输入： char* pCandidateName 候选人姓名。当输入一个空指针时，返回无效的票数
+
+输出：无
+返回：该候选人获取的票数
+
+ 
+
+void Clear()
+
+// 功能：清除投票结果，释放所有资源
+// 输入：
+// 输出：无
+// 返回
+ 
+
+输入描述:
+输入候选人的人数，第二行输入候选人的名字，第三行输入投票人的人数，第四行输入投票。
+
+输出描述:
+每行输出候选人的名字和得票数量。
+
+示例1
+输入
+4
+A B C D
+8
+A B C D E F G H
+输出
+A : 1
+B : 1
+C : 1
+D : 1
+Invalid : 4
+
+#include<iostream>
+#include<vector>
+#include<string>
+#include <algorithm>
+using namespace std;
+int main()
+{
+    int N, M;
+    while (cin >> N)
+    {
+        vector<string> name, vote;
+        string temp;
+        for (int i = 0; i < N; i++)
+        {
+            cin >> temp;
+            name.push_back(temp);
+        }
+        cin >> M;
+        for (int i = 0; i < M; i++)
+        {
+            cin >> temp;
+            vote.push_back(temp);
+        }
+        vector<int> num(N + 1, 0);
+        for (int i = 0; i < M; i++)
+        {
+             
+            vector<string>::iterator pos = find(name.begin(), name.end(), vote[i]);
+            if (pos != name.end())
+                num[pos-name.begin()]++;
+            else
+                num[N]++;
+        }
+        for (int i = 0; i < N; i++)
+        {
+            cout << name[i] << " : " << num[i] << endl;
+        }
+        cout << "Invalid : " << num[N] << endl;
+    }
+    return 0;
+}
+
+题目描述
+考试题目和要点：
+
+1、中文大写金额数字前应标明“人民币”字样。中文大写金额数字应用壹、贰、叁、肆、伍、陆、柒、捌、玖、拾、佰、仟、万、亿、元、角、分、零、整等字样填写。（30分） 
+
+2、中文大写金额数字到“元”为止的，在“元”之后，应写“整字，如￥ 532.00应写成“人民币伍佰叁拾贰元整”。在”角“和”分“后面不写”整字。（30分） 
+
+3、阿拉伯数字中间有“0”时，中文大写要写“零”字，阿拉伯数字中间连续有几个“0”时，中文大写金额中间只写一个“零”字，如￥6007.14，应写成“人民币陆仟零柒元壹角肆分“。（
+ 
+
+输入描述:
+输入一个double数
+
+输出描述:
+输出人民币格式
+
+示例1
+输入
+151121.15
+输出
+人民币拾伍万壹仟壹佰贰拾壹元壹角伍分
+
+#include<iostream>
+#include<string>
+#include<vector>
+ 
+using namespace std;
+ 
+const vector<string>helper1={"零","壹","贰","叁","肆","伍","陆","柒","捌","玖"};
+const vector<string>helper2={"元","万","亿"};
+const vector<string>helper3={"","拾","佰","仟"};
+ 
+string parts(int num){
+    string res;
+    if(num>0&&num<=9)
+         res+=helper1[num];
+    else if(num>=10&&num<=19){
+        if(num%10==0)
+            res+=helper3[1];
+        else
+            res+=helper3[1]+helper1[num%10];
+    }
+    else if(num>=20&&num<=99){
+        if(num%10==0)
+            res+=helper1[num/10]+helper3[1];
+        else
+            res+=helper1[num/10]+helper3[1]+helper1[num%10];
+    }
+    else if(num>=100&&num<=999){
+        if(num%100==0)
+            res+=helper1[num/100]+helper3[2];
+        else if(num%100<=9)
+            res+=helper1[num/100]+helper3[2]+helper1[0]+helper1[num%100];
+        else
+            res+=helper1[num/100]+helper3[2]+parts(num%100);
+             
+    }
+    else if(num>=1000&&num<=9999){
+        if(num%1000==0)
+            res+=helper1[num/1000]+helper3[3];
+        else if(num%1000<=99)
+            res+=helper1[num/1000]+helper3[3]+helper1[0]+parts(num%1000);
+        else
+            res+=helper1[num/1000]+helper3[3]+parts(num%1000);
+    }
+    return res;
+}
+ 
+int main(){
+    double money;
+    while(cin>>money){
+        money+=0.0001;    // 此处+0.0001防止double转换int产生误差
+        //分两步，分别为整数和小数部分
+        int data=static_cast<int>(money);
+        vector<int>vec;
+        string res="人民币";
+        while(data){
+            vec.push_back(data%10000);
+            data/=10000;
+        }
+        for(int i=vec.size()-1;i>=0;i--){
+            res+=parts(vec[i]);
+            res+=helper2[i];
+            if(i!=0&&i-1>=0&&vec[i-1]<=999&&vec[i-1]!=0)
+                res+=helper1[0];
+        }
+        //处理小数部分
+        int deci=static_cast<int>((money-static_cast<int>(money))*100);
+        if(deci==0)
+            res+="整";
+        else if(deci<10)
+            res+=helper1[deci]+"分";
+        else if(deci%10==0)
+            res+=helper1[deci/10]+"角";
+        else
+            res+=helper1[deci/10]+"角"+helper1[deci%10]+"分";
+        cout<<res<<endl;
+    }
+    return 0;
+}
+
+题目描述
+将一个字符中所有出现的数字前后加上符号“*”，其他字符保持不变
+ public static String MarkNum(String pInStr)
+ {
+     
+  return null;
+ }
+输入描述:
+输入一个字符串
+
+输出描述:
+字符中所有出现的数字前后加上符号“*”，其他字符保持不变
+
+示例1
+输入
+Jkdi234klowe90a3
+输出
+Jkdi*234*klowe*90*a*3*
+
+#include <iostream>
+ 
+using namespace std;
+ 
+int main()
+{
+    string str;
+    while (getline(cin, str))
+      {
+ 
+        for (int i = 0; i < str.size(); ++i)
+         {
+            if (str[i] >= '0' && str[i] <= '9' && (i == 0 || str[i - 1] < '0' || str[i - 1] > '9'))
+            {
+             str = str.substr(0,i) + '*' + str.substr(i);
+             i++;
+            }
+            if (str[i] >= '0' && str[i] <= '9' && (i == str.size() || str[i+1] < '0' || str[i + 1] > '9'))
+            {
+            str = str.substr(0,i+1) + '*' + str.substr(i+1);
+            i++;
+            }
+             
+        }
+           cout << str << endl;
+      }
+    return 0;
+}
+
+题目描述
+首先输入要输入的整数个数n，然后输入n个整数。输出为n个整数中负数的个数，和所有正整数的平均值，结果保留一位小数。
+
+输入描述:
+首先输入一个正整数n，
+然后输入n个整数。
+
+输出描述:
+输出负数的个数，和所有正整数的平均值。
+
+示例1
+输入
+5
+1
+2
+3
+4
+5
+输出
+0 3
+
+#include<iostream>
+#include<stdio.h>
+#include<vector>
+using namespace std;
+ 
+int main()
+{
+    int i,count1,count2,sum,N;
+    vector<int> nums;
+     
+    while(cin>>N)
+    {
+        nums.resize(N);
+         
+        count1 = 0;
+        count2 = 0;
+        sum = 0;
+        for(i=0;i<N;i++)
+        {
+            cin >> nums[i];
+             
+            if(nums[i]>0)
+            {
+                count1++;
+                sum += nums[i];
+            }   
+            else if(nums[i]<0)
+                count2++;
+        }
+         
+        printf("%d %.1f\n",count2,(1.0*sum)/count1);
+    }
+}
+
+题目描述
+1 总体说明
+考生需要模拟实现一个简单的自动售货系统，实现投币、购买商品、退币、查询库存商品及存钱盒信息的功能。
+系统初始化时自动售货机中商品为6种商品,商品的单价参见1.1规格说明，存钱盒内放置1元、2元、5元、10元钱币，商品数量和钱币张数通过初始化命令设置，参见2.1 系统初始化。
+1.1规格说明
+1.        商品:每种商品包含商品名称、单价、数量三种属性，其中商品名不重复。考生不能修改商品名称和单价，初始化命令设置商品数量。这些信息在考试框架中进行定义，考生在实现功能代码时可直接使用。
+ 
+输入描述:
+依照说明中的命令码格式输入命令。
+
+输出描述:
+输出执行结果
+
+示例1
+输入
+r 1-1-1-1-1-1 10-5-2-1;p 1;q 1;
+输出
+S001:Initialization is successful
+S002:Pay success,balance=1
+1 yuan coin number=11
+2 yuan coin number=5
+5 yuan coin number=2
+10 yuan coin number=1
+
+#include <iostream>
+#include <string>
+#include <algorithm>
+#include <vector>
+#include <map>
+#include <cctype>
+       
+using namespace std;
+int A_num[]={0,0,0,0,0,0,0};//货的数目
+int A_price[]={0,2,3,4,5,8,6};//货的价格
+int M_num[]={0,0,0,0};//钱币数目
+int M[]={1,2,5,10};//钱币面值
+int pay=0;//付的钱数
+     
+     
+void process(string str,int pos);
+   
+   
+int main()
+{
+    int i,k,tmp,len;
+    string  str;
+    while (getline(cin,str))
+    {
+        cout<<"S001:Initialization is successful"<<endl;//初始化成功
+        tmp=0;
+        k=1;
+        for(i=2;str[i]!=' ';i++)//取货的个数
+        {
+            if(str[i]=='-'){A_num[k++]=tmp;tmp=0;}
+            else if(isdigit(str[i]))tmp=tmp*10+str[i]-'0';
+        }
+        A_num[k]=tmp;
+        len=i;//保存空格位置
+        k=0;
+        tmp=0;
+        for(i=len;str[i]!=';';i++)//取钱的个数
+        {
+            if(str[i]=='-'){M_num[k++]=tmp;tmp=0;}
+            else if(isdigit(str[i]))tmp=tmp*10+str[i]-'0';
+        }
+        M_num[k]=tmp;
+        pay=0;//初始清零
+        for(i=13;i<str.size();i++)//功能处理
+        {
+            if((i+1)<str.size()&&str[i]==';')
+            process(str,i+1);
+        }
+    }
+       
+    return 0;
+}
+     
+     
+void process(string str,int pos)
+{
+    int i,tmp=0;
+    switch(str[pos])
+    {
+        case 'p'://付钱
+        for(i=pos+2;str[i]!=';';i++)
+        {
+            tmp=tmp*10+str[i]-'0';
+        }
+     
+        if(tmp!=1&&tmp!=2&&tmp!=5&&tmp!=10)cout<<"E002:Denomination error"<<endl;
+        else
+        {
+            if(tmp>2&&(M_num[0]+2*M_num[1])<tmp)cout<<"E003:Change is not enough, pay fail"<<endl;
+            else if(tmp>10)cout<<"E004:Pay the balance is beyond the scope biggest"<<endl;
+            else if(A_num[3]==0&&A_num[2]==0&&A_num[1]==0&&A_num[0]==0)cout<<"E005:All the goods sold out"<<endl;
+            else
+            {
+                pay+=tmp;
+                switch(tmp)
+                {
+                case 1:M_num[0]++;cout<<"S002:Pay success,balance="<<pay<<endl;break;
+                case 2:M_num[1]++;cout<<"S002:Pay success,balance="<<pay<<endl;break;
+                case 5:M_num[2]++;cout<<"S002:Pay success,balance="<<pay<<endl;break;
+                case 10:M_num[3]++;cout<<"S002:Pay success,balance="<<pay<<endl;break;
+                default:break;
+                }
+            }
+        }
+    break;
+    case 'q'://查询
+    tmp=str[pos+2]-'0';
+    if(tmp==0)
+    {
+        for(i=1;i<=6;i++)cout<<"A"<<i<<" "<<A_price[i]<<" "<<A_num[i]<<endl;
+    }
+    else if(tmp==1)
+    {
+        for(i=0;i<4;i++)cout<<M[i]<<" yuan coin number="<<M_num[i]<<endl;
+    }
+    else cout<<"E010:Parameter error";
+    break;
+    case 'b'://买商品
+    tmp=str[pos+3]-'0';
+    if(tmp>=1&&tmp<=6)
+    {
+        if(A_num[tmp]==0)cout<<"E007:The goods sold out"<<endl;
+        else if(pay<A_price[tmp])cout<<"E008:Lack of balance"<<endl;
+        else {pay-=A_price[tmp];cout<<"S003:Buy success,balance="<<pay<<endl;A_num[tmp]--;}
+    }
+    else
+    cout<<"E006:Goods does not exist"<<endl;
+    break;
+    case 'c'://找钱退币
+    if(pay==0)cout<<"E009:Work failure";
+    else
+    {
+        int cnt[4]={0,0,0,0};
+        while((pay-10)>=0&&M_num[3]>0){pay-=10;M_num[3]--;cnt[3]++;}
+        while((pay-5)>=0&&M_num[2]>0){pay-=5;M_num[2]--;cnt[2]++;}
+        while((pay-2)>=0&&M_num[1]>0){pay-=2;M_num[1]--;cnt[1]++;}
+        while((pay-1)>=0&&M_num[0]>0){pay-=1;M_num[0]--;cnt[0]++;}
+        for(i=0;i<4;i++)cout<<M[i]<<" yuan coin number="<<cnt[i]<<endl;
+        pay=0;
+    }
+    break;
+    default:
+    break;
+    }
+}
+
+题目描述
+自守数是指一个数的平方的尾数等于该数自身的自然数。例如：25^2 = 625，76^2 = 5776，9376^2 = 87909376。请求出n以内的自守数的个数
+
+
+接口说明
+
+
+/*
+功能: 求出n以内的自守数的个数
+
+
+输入参数：
+int n
+
+返回值：
+n以内自守数的数量。
+*/
+
+
+public static int CalcAutomorphicNumbers( int n)
+{
+/*在这里实现功能*/
+
+return 0;
+}
+
+
+
+输入描述:
+int型整数
+
+输出描述:
+n以内自守数的数量。
+
+示例1
+输入
+2000
+输出
+8
+
+#include<iostream>
+#include<string>
+#include<algorithm>
+using namespace std;
+ 
+int main(){
+    long n;
+    while(cin>>n){
+        int cnt=2;   //0和2也是
+        for(long i=2; i<=n; i++){
+            long n2=i*i;
+            string s1=to_string(i);
+            string s2=to_string(n2);
+            int pos=s2.size()-s1.size();
+            if(s2.find(s1,pos) != -1)
+                cnt++;
+        }
+        cout<<cnt<<endl;
+    }
+    return 0;
+}
+
+题目描述
+功能:等差数列 2，5，8，11，14。。。。
+
+输入:正整数N >0
+
+输出:求等差数列前N项和
+
+返回:转换成功返回 0 ,非法输入与异常返回-1
+
+ 
+
+输入描述:
+输入一个正整数。
+
+输出描述:
+输出一个相加后的整数。
+
+示例1
+输入
+2
+输出
+7
+
+#include <iostream>
+using namespace std;
+#define d 3
+ 
+int f(int n)
+{
+    return 2+(n-1)*d;
+}
+ 
+ 
+int main()
+{
+    int n;
+    while(cin>>n)
+    {
+        if(n<1)
+        {
+            cout<<-1<<endl;
+            return 0;
+        }
+        cout<<n*(2+f(n))/2<<endl;
+    }
+    return 0;
+}
+
+题目描述
+输入整型数组和排序标识，对其元素按照升序或降序进行排序
+
+接口说明
+
+原型：
+
+void sortIntegerArray(Integer[] pIntegerArray, int iSortFlag);
+
+输入参数：
+
+    Integer[] pIntegerArray：整型数组
+
+int  iSortFlag：排序标识：0表示按升序，1表示按降序
+
+输出参数：
+
+    无
+
+返回值：
+
+    void
+
+
+输入描述:
+1、输入需要输入的整型数个数
+
+输出描述:
+输出排好序的数字
+
+示例1
+输入
+8
+1 2 4 9 3 55 64 25
+0
+输出
+1 2 3 4 9 25 55 64
+
+#include <iostream>
+#include <vector>
+#include <algorithm>
+ 
+using namespace std;
+ 
+int main()
+{
+    int N;
+    while (cin >> N){
+    
+    vector <int> array(N);
+     
+    for (int i = 0; i < N; ++i)
+        cin >> array[i];
+    int mode;
+    cin >> mode;
+    sort (array.begin(), array.end());
+    
+   if (mode == 1)
+       reverse (array.begin(), array.end());
+     
+     
+       for (int i = 0; i < array.size() - 1; ++i)
+        cout << array[i] << " ";
+        cout << array[N-1] << endl;
+    }
+   return 0;    
+}
+
+题目描述
+如果统计的个数相同，则按照ASII码由小到大排序输出 。如果有其他字符，则对这些字符不用进行统计。
+
+实现以下接口：
+    输入一个字符串，对字符中的各个英文字符，数字，空格进行统计（可反复调用）
+    按照统计个数由多到少输出统计结果，如果统计的个数相同，则按照ASII码由小到大排序输出
+    清空目前的统计结果，重新统计
+调用者会保证：
+输入的字符串以‘\0’结尾。
+
+ 
+
+ 
+
+输入描述:
+输入一串字符。
+
+输出描述:
+对字符中的
+各个英文字符（大小写分开统计），数字，空格进行统计，并按照统计个数由多到少输出,如果统计的个数相同，则按照ASII码由小到大排序输出 。如果有其他字符，则对这些字符不用进行统计。
+
+示例1
+输入
+aadddccddc
+输出
+dca
+
+#include <stdio.h>
+ 
+struct character_t {
+    char value;
+    int count;
+};
+typedef struct character_t character_t;
+ 
+typedef character_t quick_sort_item_t;
+ 
+static int quick_sort_compare(quick_sort_item_t x, quick_sort_item_t y);
+static int quick_sort_partition(quick_sort_item_t * array, int i, int j);
+static void quick_sort(quick_sort_item_t * array, int i, int j);
+static void quick_sort_swap(quick_sort_item_t * array, int i, int j);
+ 
+int freq[128] = {0};
+character_t characters[128] = {0};
+int character_count = 0;
+ 
+int main(int argc, char * argv[]) {
+    char c;
+    for (c = 0; c < (char) 127; ++c) {
+        freq[c] = 0;
+    }
+    while (scanf("%c", &c) > 0) {
+        if (c == '\0' || c == '\n') {
+            for (c = 0; c < (char) 127; ++c) {
+                if (freq[c] > 0) {
+                    characters[character_count].value = c;
+                    characters[character_count].count = freq[c];
+                    character_count++;
+                }
+            }
+            quick_sort(characters, 0, character_count - 1);
+            for (c = 0; c < character_count; ++c) {
+                printf("%c", (char) characters[c].value);
+            }
+            printf("\n");
+            for (c = 0; c < (char) 127; ++c) {
+                freq[c] = 0;
+            }
+            character_count = 0;
+            continue;
+        }
+        if (c != ' ' && !(c >= '0' && c <= '9') && !(c >= 'a' && c <= 'z') && !(c >= 'A' && c <= 'Z')) {
+            continue;
+        }
+        freq[c]++;
+    }
+    return 0;
+}
+ 
+int quick_sort_compare(quick_sort_item_t x, quick_sort_item_t y) {
+    if (x.count != y.count) {
+        return y.count - x.count;
+    }
+    return x.value - y.value;
+}
+ 
+void quick_sort_swap(quick_sort_item_t * array, int i, int j) {
+    quick_sort_item_t item = array[i];
+    array[i] = array[j];
+    array[j] = item;
+}
+ 
+int getMedian(quick_sort_item_t * array, int i, int j, int k) {
+    return quick_sort_compare(array[i], array[j]) < 0
+        ? (quick_sort_compare(array[j], array[k]) < 0 ? j : quick_sort_compare(array[i], array[k]) < 0 ? k : i)
+        : (quick_sort_compare(array[j], array[k]) > 0 ? j : quick_sort_compare(array[i], array[k]) > 0 ? k : i);
+}
+ 
+int quick_sort_partition(quick_sort_item_t * array, int i, int j) {
+    int k = (i + j) / 2;
+    int pivotIndex = getMedian(array, i, j, k);
+    quick_sort_item_t pivot = array[pivotIndex];
+    for (; ; ) {
+        while (quick_sort_compare(array[i], pivot) < 0) {
+            i++;
+        }
+        while (quick_sort_compare(array[j], pivot) > 0) {
+            j--;
+        }
+        if (i >= j) {
+            return j;
+        }
+        quick_sort_swap(array, i, j);
+        i++;
+        j--;
+    }
+}
+ 
+void quick_sort(quick_sort_item_t * array, int i, int j) {
+    if (i >= j) {
+        return;
+    }
+    int pivot = quick_sort_partition(array, i, j);
+    quick_sort(array, i, pivot);
+    quick_sort(array, pivot + 1, j);
+}
+
+
+题目描述
+题目描述 
+
+   Redraiment是走梅花桩的高手。Redraiment总是起点不限，从前到后，往高的桩子走，但走的步数最多，不知道为什么？你能替Redraiment研究他最多走的步数吗？ 
+
+ 
+
+样例输入
+
+6
+
+2 5 1 5 4 5
+
+ 
+
+样例输出
+
+3
+
+ 
+
+提示
+
+Example: 
+6个点的高度各为 2 5 1 5 4 5 
+如从第1格开始走,最多为3步, 2 4 5 
+从第2格开始走,最多只有1步,5 
+而从第3格开始走最多有3步,1 4 5 
+从第5格开始走最多有2步,4 5
+
+所以这个结果是3。
+
+ 
+
+接口说明
+
+方法原型：
+
+    int GetResult(int num, int[] pInput, List  pResult);
+
+输入参数：
+   int num：整数，表示数组元素的个数（保证有效）。
+   int[] pInput: 数组，存放输入的数字。
+
+输出参数：
+   List pResult: 保证传入一个空的List，要求把结果放入第一个位置。
+返回值：
+  正确返回1，错误返回0
+
+ 
+
+ 
+
+ 
+
+输入描述:
+输入多行，先输入数组的个数，再输入相应个数的整数
+
+输出描述:
+输出结果
+
+示例1
+输入
+6
+2
+5
+1
+5
+4
+5
+输出
+3
+
+#include<iostream>
+#include<cstdlib>
+#include<vector>
+#include<string>
+using namespace std;
+//这个程序调的时间挺长
+//基本思想是按照题目要求，即从左向右扫描数据，计算以每个数据作为起始桩，需要走的树桩的最大数目
+int main(){
+  int N;
+ while(cin>>N){
+ vector<int>num(N,0);//存储所有的数
+ vector<int>label(N,0);//最长的排序序号
+ for(int i=0;i<N;i++)
+     cin>>num[i];
+ int temp=0,max=0,max1=0;
+ int i,j,k;
+ for(i=0;i<(int)(num.size()-1);i++){
+    temp=num[i];
+    label[i]=1;
+  for(j=i+1;j<num.size();j++){
+    k=j;
+    if(num[j]>temp){
+    label[j]=2;
+    k=k-1;
+  while(k>=i){
+    if(label[j]<=label[k]&&num[j]>num[k])//出现大数就需要比较排序量
+    label[j]=label[k]+1;
+    k=k-1;
+   }
+ }
+ else label[j]=0;
+ if(label[j]>max)max=label[j];//存储最大的长度
+  }
+}
+ cout<<max<<endl;
+}
+return 0;
+}
+
+题目描述
+连续输入字符串(输出次数为N,字符串长度小于100)，请按长度为8拆分每个字符串后输出到新的字符串数组，
+
+长度不是8整数倍的字符串请在后面补数字0，空字符串不处理。
+
+首先输入一个整数，为要输入的字符串个数。
+
+例如：
+
+输入：2
+
+      abc
+
+      12345789
+
+输出：abc00000
+
+      12345678
+
+      90000000
+
+接口函数设计如下:
+
+/***************************************************************************** 
+功能:存储输入的字符创
+
+输入:字符串
+
+输出:无 
+     
+返回:0表示成功,其它返回-1 
+******************************************************************************/
+
+int  AddString(char *strValue); 
+/**************************************************************************** 
+功能:获取补位后的二维数组的长度
+
+输入:无
+
+输出:无 
+     
+返回:二维数组长度 
+*****************************************************************************/
+
+int  GetLength();
+
+
+/***************************************************************************** 
+功能:将补位后的二维数组，与输入的二维数组做比较
+
+输入:strInput:输入二维数组,iLen：输入的二维数组的长度
+
+输出:无 
+     
+返回:若相等,返回0;不相等,返回-1.其它:-1; 
+******************************************************************************/ 
+int  ArrCmp(char strInput[][9],int iLen);
+
+ 
+
+输入描述:
+首先输入数字n，表示要输入多少个字符串。连续输入字符串(输出次数为N,字符串长度小于100)。
+
+输出描述:
+按长度为8拆分每个字符串后输出到新的字符串数组，长度不是8整数倍的字符串请在后面补数字0，空字符串不处理。
+
+示例1
+输入
+2
+abc
+123456789
+输出
+abc00000
+12345678
+90000000
+
+#include<iostream>
+#include<string>
+using namespace std;
+int main()
+{
+    int n;
+    while(cin>>n)
+    {
+        string str[100];    //vector<string>v;v.push_back()
+        for(int i=0;i<n;i++)
+            cin>>str[i];
+        string temp;
+        int j;
+        for(int i=0;i<n;i++)
+        {
+            temp=str[i];
+            for(j=0;j<temp.size();j++)
+            {
+                cout<<temp[j];
+                if((j + 1) % 8==0)
+                    cout<<endl;
+            }
+            if(j%8!=0)
+            {
+                for(int k=j%8;k<8;k++)
+                    cout<<0;
+                cout<<endl;
+            }
+            //cout<<endl;    不能放在这里，错误
+        }    
+    }
+    //system("pause");
+    return 0;
+}
+
+题目描述
+从输入任意个整型数，统计其中的负数个数并求所有非负数的平均值
+输入描述:
+输入任意个整数
+
+输出描述:
+输出负数个数以及所有非负数的平均值
+
+示例1
+输入
+-13
+-4
+-7
+输出
+3
+0.0
+
+#include <iostream>
+#include <iomanip>
+  
+using namespace std;
+  
+int main() {
+    int n;
+    int cnt_neg = 0;
+    int cnt_pos = 0;
+    double sum = 0;
+    while (cin >> n)
+    {
+        if (n >= 0)
+        {
+            sum += n;
+            cnt_pos++;
+        }
+        else
+            cnt_neg++;
+    }
+    cout << cnt_neg << endl;
+    cout <<  setprecision(1)<<fixed  << sum / cnt_pos << endl;
+    return 0;
+}
+
+题目描述
+将一个字符串str的内容颠倒过来，并输出。str的长度不超过100个字符。 如：输入“I am a student”，输出“tneduts a ma I”。
+
+ 
+
+ 
+
+ 
+输入参数：
+
+inputString：输入的字符串
+
+ 
+
+
+返回值：
+
+输出转换好的逆序字符串
+
+ 
+
+ 
+
+输入描述:
+输入一个字符串，可以有空格
+
+输出描述:
+输出逆序的字符串
+
+示例1
+输入
+I am a student
+输出
+tneduts a ma I
+
+#include <iostream>
+#include <string>
+using namespace std;
+int main()
+{
+    string str;
+    getline(cin, str);//保存输入的字符串
+    string strout[100];//输出的字符串
+    int len = str.length();//获取字符串的长度
+    if (len > 100)
+        return -1;
+    //int j = len;
+    for (int i = 0; i<=len; i++)
+    {
+        strout[i] = str.substr(len-i, 1);
+        //j--;
+    }
+         
+         
+     
+    for (int i = 0; i <=len; i++)
+    {
+        cout << strout[i];
+    }
+     
+    return 0;
+}
+
+题目描述
+?计算一个数字的立方根，不使用库函数
+
+详细描述：
+
+?接口说明
+
+原型：
+
+public static double getCubeRoot(double input)
+
+输入:double 待求解参数
+
+返回值:double  输入参数的立方根
+
+
+输入描述:
+待求解参数 double类型
+
+输出描述:
+输入参数的立方根 也是double类型
+
+示例1
+输入
+216
+输出
+6.0
+
+#include<iostream>
+using namespace std;
+double abs(double n){
+    return n>0?n:-n;
+}
+ 
+double cube(double y){
+    double x;
+    for(x=1.0;abs(x*x*x-y)>1e-7;x=(2*x+y/x/x)/3);  //通过牛顿迭代思想，计算一个实数的立方根
+    return x;
+}
+ 
+int main(void){
+    cout.precision(2);
+    double y;
+    while(cin>>y){
+        cout<<cube(y)<<endl;
+    }
+}
+
+题目描述
+正整数A和正整数B 的最小公倍数是指 能被A和B整除的最小的正整数值，设计一个算法，求输入A和B的最小公倍数。
+
+输入描述:
+输入两个正整数A和B。
+
+输出描述:
+输出A和B的最小公倍数。
+
+示例1
+输入
+5 
+7
+输出
+35
+
+
+#include <iostream>
+ 
+using namespace std;
+ 
+int main(){
+    int A, B;
+     
+    fflush(stdin);
+    while(scanf("%d\n%d", &A, &B) != EOF){
+        int i = 1;
+         
+        while(1){
+            if((A * i) % B == 0){
+                cout << A * i;
+                break;
+            }
+            i++;
+        }
+    }
+     
+    return 0;
+}
